@@ -163,18 +163,18 @@ class TestTutorials extends JdbcTestCase {
         // assertEquals(69, rowResult[1] as Double, 5.0)
 
         // Check export geojson
-        File testPath = new File("target/tutoPointSource.geojson")
+        File testPath = new File("build/test-results/tutoPointSource.geojson")
 
         if(testPath.exists()) {
             testPath.delete()
         }
 
         /*new Export_Table().exec(connection,
-                ["exportPath"   : "target/tutoPointSource.geojson",
+                ["exportPath"   : "build/test-results/tutoPointSource.geojson",
                  "tableToExport": "LDAY_GEOM"])*/
 
         new Export_Table().exec(connection,
-                ["exportPath"   : "target/tutoRaysElise.geojson",
+                ["exportPath"   : "build/test-results/tutoRaysElise.geojson",
                  "tableToExport": "RAYS"])
 
     }

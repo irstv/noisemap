@@ -112,10 +112,10 @@ dependencies {
     implementation group: 'org.orbisgis', name: 'h2gis', version: '2.2.0'
     implementation('org.locationtech.jts:jts-core:1.19.0')
     implementation('org.locationtech.jts:jts-io:1.19.0')
-    implementation group: 'org.orbisgis', name: 'noisemodelling-emission', version: '4.0.6-SNAPSHOT'
-    implementation group: 'org.orbisgis', name: 'noisemodelling-propagation', version: '4.0.6-SNAPSHOT'
-    implementation group: 'org.orbisgis', name: 'noisemodelling-pathfinder', version: '4.0.6-SNAPSHOT'
-    implementation group: 'org.orbisgis', name: 'noisemodelling-jdbc', version: '4.0.6-SNAPSHOT'
+    implementation group: 'org.orbisgis', name: 'noisemodelling-emission', version: '5.0.0-SNAPSHOT'
+    implementation group: 'org.orbisgis', name: 'noisemodelling-propagation', version: '5.0.0-SNAPSHOT'
+    implementation group: 'org.orbisgis', name: 'noisemodelling-pathfinder', version: '5.0.0-SNAPSHOT'
+    implementation group: 'org.orbisgis', name: 'noisemodelling-jdbc', version: '5.0.0-SNAPSHOT'
     implementation group: 'org.osgi', name: 'org.osgi.service.jdbc', version: '1.0.0'
     implementation group: 'org.openstreetmap.osmosis', name: 'osmosis-core', version: '0.48.3'
     implementation group: 'org.openstreetmap.osmosis', name: 'osmosis-pbf', version: '0.48.3'
