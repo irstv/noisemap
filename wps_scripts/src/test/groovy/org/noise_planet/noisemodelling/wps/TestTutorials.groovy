@@ -126,11 +126,9 @@ class TestTutorials extends JdbcTestCase {
         assertTrue(res.contains("POINT_SOURCE"))
         assertTrue(res.contains("BUILDINGS"))
 
-        /* new Delaunay_Grid().exec(connection,
-                 ["tableBuilding": "BUILDINGS", "sourcesTableName": "POINT_SOURCE", "maxArea": 1500, 'Height':2.0])*/
-        new Regular_Grid().exec(connection, ["sourcesTableName": "POINT_SOURCE",
-                                             delta             : 700,
-                                             "buildingTableName"   : "BUILDINGS"])
+        sql.execute("DROP TABLE IF EXISTS RECEIVERS")
+        sql.execute("CREATE TABLE RECEIVERS(PK INTEGER PRIMARY KEY, THE_GEOM GEOMETRY(POINTZ, 2062))")
+        sql.execute("INSERT INTO RECEIVERS VALUES (1, 'SRID=2062;POINTZ(599094.918 646232.236 1.6)')")
 
         // Check database
         res = new Display_Database().exec(connection, [])
@@ -141,12 +139,13 @@ class TestTutorials extends JdbcTestCase {
         res = new Noise_level_from_source().exec(connection, ["tableSources"  : "POINT_SOURCE",
                                                               "tableBuilding" : "BUILDINGS",
                                                               "tableReceivers": "RECEIVERS",
+                                                              "confThreadNumber" : 1,
                                                               "confReflOrder" : 2,
                                                               "confRaysName" : "RAYS",
                                                               "confMaxReflDist": "1000",
                                                               "confMaxSrcDist": "1000",
-                                                              "confDiffVertical" : true,
-                                                              "confDiffHorizontal" : true,
+                                                              "confDiffVertical" : false,
+                                                              "confDiffHorizontal" : false,
                                                               "confSkipLevening" : true,
                                                               "confSkipLnight" : true,
                                                               "confSkipLden" : true])
