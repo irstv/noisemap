@@ -47,7 +47,7 @@ jobs:
       - name: Unzip production artifacts
         run: cd wps_scripts && ./gradlew assembleDist && unzip build/distributions/scriptrunner.zip
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name:  NoiseModelling_without_gui.zip
           path: wps_scripts/scriptrunner/
