@@ -8,6 +8,8 @@ Below is a non-exhaustive list of articles or presentations in which NoiseModell
 Standard Noise maps
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Legriffon, I., & Ruaud, E. (2024, October). `Drone fleet noise impact calculation-a methodology <https://v4.event-vert.org/uploads/AbstractsBundle/INTERNOISE2024/fullpaper/IN_2024_3049.pdf?t=1729070945>`_. In INTER-NOISE and NOISE-CON Congress and Conference Proceedings (Vol. 270, No. 10, pp. 1675-1680). Institute of Noise Control Engineering.
+
 MONTENEGRO, Alexandra L., MELLUSO, Dulia, STASI, Gianmarco, et al. AN OPEN-SOURCE PIPELINE IN NOISE MODELLING AND NOISE EXPOSURE REDUCTION IN A PORT CITY, July 2024.
 
 BACLET S., VENKATARAMAN S., RUMPLER R., BILLSJÖ R., HORVATH J., ÖSTERLUND P. E., , `From strategic noise maps to receiver-centric noise exposure sensitivity mapping <https://www.sciencedirect.com/science/article/pii/S1361920921004089>`_, Transportation Research Part D: Transport and Environment, 2022, vol. 102 *(Noise mapping, Road traffic noise, Population exposure, Road network sensitivity)*
