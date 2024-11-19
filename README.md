@@ -18,7 +18,7 @@ A general overview of the model (v3.4.5 - September 2020) can be found in [this 
 * to **contact the support / development team**, 
     - open an issue : https://github.com/Universite-Gustave-Eiffel/NoiseModelling/issues or a write a message : https://github.com/Universite-Gustave-Eiffel/NoiseModelling/discussions *(we prefer these two options)*
     - send us an email at ``contact@noise-planet.org``
-* follow us on Twitter @Noise_Planet [![Twitter Follow](https://img.shields.io/twitter/follow/noise_planet.svg?style=social&label=Follow)](https://twitter.com/Noise_Planet?lang=en)
+* follow us on [LinkedIn](https://www.linkedin.com/company/noise-planet/)
 
 Stable release
 ---------------------------

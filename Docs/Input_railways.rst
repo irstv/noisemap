@@ -114,5 +114,5 @@ Table definition
 	* Type: Integer
 
 
-.. _Rail_Train_SNCF_2021.json : https://github.com/Universite-Gustave-Eiffel/NoiseModelling/blob/4.X/noisemodelling-emission/src/main/resources/org/noise_planet/noisemodelling/emission/Rail_Train_SNCF_2021.json
+.. _Rail_Train_SNCF_2021.json : https://github.com/Universite-Gustave-Eiffel/NoiseModelling/blob/4.X/noisemodelling-emission/src/main/resources/org/noise_planet/noisemodelling/emission/railway/RailwayCnossosSNCF_2021.json
 

@@ -8,6 +8,8 @@ Below is a non-exhaustive list of articles or presentations in which NoiseModell
 Standard Noise maps
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+MONTENEGRO, Alexandra L., MELLUSO, Dulia, STASI, Gianmarco, et al. AN OPEN-SOURCE PIPELINE IN NOISE MODELLING AND NOISE EXPOSURE REDUCTION IN A PORT CITY, July 2024.
+
 BACLET S., VENKATARAMAN S., RUMPLER R., BILLSJÖ R., HORVATH J., ÖSTERLUND P. E., , `From strategic noise maps to receiver-centric noise exposure sensitivity mapping <https://www.sciencedirect.com/science/article/pii/S1361920921004089>`_, Transportation Research Part D: Transport and Environment, 2022, vol. 102 *(Noise mapping, Road traffic noise, Population exposure, Road network sensitivity)*
 
 GRAZIUSO G., FRANCAVILLA A. B., MANCINI S., GUARNACCIA C., `Open-source software tools for strategic noise mapping: a case study <https://iopscience.iop.org/article/10.1088/1742-6596/2162/1/012014>`_, Journal of Physics: Conference Series, 2022, vol. 2162, 012014
@@ -27,6 +29,8 @@ AUMOND P., FORTIN N., CAN A., `Overview of the NoiseModelling open-source softwa
 
 Dynamic Noise maps
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BACLET, Sacha, KHOSHKHAH, Kaveh, POURMORADNASSERI, Mozhgan, et al. Near-real-time dynamic noise mapping and exposure assessment using calibrated microscopic traffic simulations. Transportation Research Part D: Transport and Environment, 2023, vol. 124, p. 103922.
 
 LE BESCOND V., CAN A., AUMOND P., GASTINEAU P., `Open-source modeling chain for the dynamic assessment of road traffic noise exposure <https://www.sciencedirect.com/science/article/pii/S1361920921000973>`_, Transportation Research Part D: Transport and Environment, 2021, vol. 94, 102793 (Watch a `short presentation <https://youtu.be/jNCG0qQrsrE>`_ on Youtube)
 
