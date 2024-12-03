@@ -145,6 +145,51 @@ public class NoiseMapMaker implements NoiseMapByReceiverMaker.PropagationProcess
                     noiseMapParameters.setPropagationProcessPathData(timePeriod, noiseMapByReceiverMaker.getPropagationProcessPathData(timePeriod));
                 }
             }
+        } else if(noiseMapParameters.input_mode == org.noise_planet.noisemodelling.jdbc.NoiseMapParameters.INPUT_MODE.INPUT_MODE_LW_HZ) {
+            // Fetch source fields
+            List<String> sourceField = JDBCUtilities.getColumnNames(connection, noiseMapByReceiverMaker.getSourcesTableName());
+            this.srid = GeometryTableUtilities.getSRID(connection, noiseMapByReceiverMaker.getSourcesTableName());
+            List<Integer> frequencyValues = new ArrayList<>();
+            List<Integer> allFrequencyValues = Arrays.asList(Scene.DEFAULT_FREQUENCIES_THIRD_OCTAVE);
+
+            String freqField = "HZ";
+
+            for (String fieldName : sourceField) {
+                if (fieldName.startsWith(freqField)) {
+                    int freq = Integer.parseInt(fieldName.substring(freqField.length()));
+                    int index = allFrequencyValues.indexOf(freq);
+                    if (index >= 0) {
+                        frequencyValues.add(freq);
+                    }
+                }
+            }
+
+            // Sort frequencies values
+            Collections.sort(frequencyValues);
+            // Get associated values for each frequency
+            List<Double> exactFrequencies = new ArrayList<>();
+            List<Double> aWeighting = new ArrayList<>();
+            for (int freq : frequencyValues) {
+                int index = allFrequencyValues.indexOf(freq);
+                exactFrequencies.add(Scene.DEFAULT_FREQUENCIES_EXACT_THIRD_OCTAVE[index]);
+                aWeighting.add(Scene.DEFAULT_FREQUENCIES_A_WEIGHTING_THIRD_OCTAVE[index]);
+            }
+            if(frequencyValues.isEmpty()) {
+                throw new SQLException("Source table "+ noiseMapByReceiverMaker.getSourcesTableName()+" does not contains any frequency bands");
+            }
+            // Instance of PropagationProcessPathData maybe already set
+            for(NoiseMapParameters.TIME_PERIOD timePeriod : NoiseMapParameters.TIME_PERIOD.values()) {
+                if (noiseMapByReceiverMaker.getPropagationProcessPathData(timePeriod) == null) {
+                    AttenuationCnossosParameters attenuationCnossosParameters = new AttenuationCnossosParameters(frequencyValues, exactFrequencies, aWeighting);
+                    noiseMapParameters.setPropagationProcessPathData(timePeriod, attenuationCnossosParameters);
+                    noiseMapByReceiverMaker.setPropagationProcessPathData(timePeriod, attenuationCnossosParameters);
+                } else {
+                    noiseMapByReceiverMaker.getPropagationProcessPathData(timePeriod).setFrequencies(frequencyValues);
+                    noiseMapByReceiverMaker.getPropagationProcessPathData(timePeriod).setFrequenciesExact(exactFrequencies);
+                    noiseMapByReceiverMaker.getPropagationProcessPathData(timePeriod).setFrequenciesAWeighting(aWeighting);
+                    noiseMapParameters.setPropagationProcessPathData(timePeriod, noiseMapByReceiverMaker.getPropagationProcessPathData(timePeriod));
+                }
+            }
         } else {
             for(NoiseMapParameters.TIME_PERIOD timePeriod : NoiseMapParameters.TIME_PERIOD.values()) {
                 if (noiseMapByReceiverMaker.getPropagationProcessPathData(timePeriod) == null) {

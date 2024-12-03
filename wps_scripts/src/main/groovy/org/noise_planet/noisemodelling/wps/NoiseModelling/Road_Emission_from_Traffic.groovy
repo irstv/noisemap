@@ -70,7 +70,15 @@ inputs = [
                         "<li><b> WAY </b> : Define the way of the road section. 1 = one way road section and the traffic goes in the same way that the slope definition you have used, 2 = one way road section and the traffic goes in the inverse way that the slope definition you have used, 3 = bi-directional traffic flow, the flow is split into two components and correct half for uphill and half for downhill (INTEGER)</li>" +
                         "</ul></br><b> This table can be generated from the WPS Block 'Import_OSM'. </b>.",
                 type       : String.class
+        ],
+        mode : [ name: 'mode',
+                 title      : 'mode',
+                 description: "",
+                 min        : 0,
+                 max        : 1,
+                 type       : String.class
         ]
+
 ]
 
 outputs = [
@@ -127,6 +135,12 @@ def exec(Connection connection, input) {
     // Get every inputs
     // -------------------
 
+    String mode = ""
+    if (input['mode']) {
+        mode = input['mode']
+    }
+
+
     String sources_table_name = input['tableRoads']
     // do it case-insensitive
     sources_table_name = sources_table_name.toUpperCase()
@@ -141,11 +155,13 @@ def exec(Connection connection, input) {
     if (geomFields.isEmpty()) {
         throw new SQLException(String.format("The table %s does not exists or does not contain a geometry field", sourceTableIdentifier))
     }
-
+    int pkIndex = 0
     //Get the primary key field of the source table
-    int pkIndex = JDBCUtilities.getIntegerPrimaryKey(connection, TableLocation.parse( sources_table_name))
-    if (pkIndex < 1) {
-        throw new IllegalArgumentException(String.format("Source table %s does not contain a primary key", sourceTableIdentifier))
+    if (mode == ""){
+        pkIndex = JDBCUtilities.getIntegerPrimaryKey(connection, TableLocation.parse( sources_table_name))
+        if (pkIndex < 1) {
+            throw new IllegalArgumentException(String.format("Source table %s does not contain a primary key", sourceTableIdentifier))
+        }
     }
 
 
@@ -155,7 +171,9 @@ def exec(Connection connection, input) {
 
     // Create a sql connection to interact with the database in SQL
     Sql sql = new Sql(connection)
+    String qry = ""
 
+    if (mode.equals("")){
     // drop table LW_ROADS if exists and the create and prepare the table
     sql.execute("drop table if exists LW_ROADS;")
     sql.execute("create table LW_ROADS (pk integer, the_geom Geometry, " +
@@ -163,11 +181,20 @@ def exec(Connection connection, input) {
             "LWE63 double precision, LWE125 double precision, LWE250 double precision, LWE500 double precision, LWE1000 double precision, LWE2000 double precision, LWE4000 double precision, LWE8000 double precision," +
             "LWN63 double precision, LWN125 double precision, LWN250 double precision, LWN500 double precision, LWN1000 double precision, LWN2000 double precision, LWN4000 double precision, LWN8000 double precision);")
 
-    def qry = 'INSERT INTO LW_ROADS(pk,the_geom, ' +
+        qry = 'INSERT INTO LW_ROADS(pk,the_geom, ' +
             'LWD63, LWD125, LWD250, LWD500, LWD1000,LWD2000, LWD4000, LWD8000,' +
             'LWE63, LWE125, LWE250, LWE500, LWE1000,LWE2000, LWE4000, LWE8000,' +
             'LWN63, LWN125, LWN250, LWN500, LWN1000,LWN2000, LWN4000, LWN8000) ' +
             'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);'
+    } else {
+        sql.execute("drop table if exists LW_ROADS;")
+        sql.execute("create table LW_ROADS (LINK_ID VARCHAR(255), the_geom Geometry, T integer, " +
+                "HZ63 double precision, HZ125 double precision, HZ250 double precision, HZ500 double precision, HZ1000 double precision, HZ2000 double precision, HZ4000 double precision, HZ8000 double precision);")
+
+        qry = 'INSERT INTO LW_ROADS(LINK_ID,the_geom, T, ' +
+                'HZ63, HZ125, HZ250, HZ500, HZ1000,HZ2000, HZ4000, HZ8000) ' +
+                'VALUES (?,?,?,?,?,?,?,?,?,?,?);'
+    }
 
 
     // --------------------------------------
@@ -175,12 +202,9 @@ def exec(Connection connection, input) {
     // --------------------------------------
 
     // Get Class to compute LW
-    NoiseMapParameters noiseMapParameters = new NoiseMapParameters(NoiseMapParameters.INPUT_MODE.INPUT_MODE_TRAFFIC_FLOW)
+    NoiseMapParameters noiseMapParameters = new NoiseMapParameters(NoiseMapParameters.INPUT_MODE.INPUT_MODE_TRAFFIC_FLOW_NOT_DEN)
     noiseMapParameters.setCoefficientVersion(2)
     noiseMapParameters.setPropagationProcessPathData(NoiseMapParameters.TIME_PERIOD.DAY, new AttenuationCnossosParameters(false));
-    noiseMapParameters.setPropagationProcessPathData(NoiseMapParameters.TIME_PERIOD.EVENING, new AttenuationCnossosParameters(false));
-    noiseMapParameters.setPropagationProcessPathData(NoiseMapParameters.TIME_PERIOD.NIGHT, new AttenuationCnossosParameters(false));
-
     NoiseEmissionMaker noiseEmissionMaker = new NoiseEmissionMaker(null, noiseMapParameters)
 
 
@@ -203,31 +227,60 @@ def exec(Connection connection, input) {
             //logger.info(rs)
             Geometry geo = rs.getGeometry()
 
-            // Compute emission sound level for each road segment
-            def results = noiseEmissionMaker.computeLw(rs)
-            def lday = Utils.wToDba(results[0])
-            def levening = Utils.wToDba(results[1])
-            def lnight = Utils.wToDba(results[2])
-            // fill the LW_ROADS table
-            ps.addBatch(rs.getLong(pkIndex) as Integer, geo as Geometry,
-                    lday[0] as Double, lday[1] as Double, lday[2] as Double,
-                    lday[3] as Double, lday[4] as Double, lday[5] as Double,
-                    lday[6] as Double, lday[7] as Double,
-                    levening[0] as Double, levening[1] as Double, levening[2] as Double,
-                    levening[3] as Double, levening[4] as Double, levening[5] as Double,
-                    levening[6] as Double, levening[7] as Double,
-                    lnight[0] as Double, lnight[1] as Double, lnight[2] as Double,
-                    lnight[3] as Double, lnight[4] as Double, lnight[5] as Double,
-                    lnight[6] as Double, lnight[7] as Double)
+            if (mode == "") {
+                // Compute emission sound level for each road segment
+                def results = noiseEmissionMaker.computeLw(rs)
+                def lday = Utils.wToDba(results[0])
+                def levening = Utils.wToDba(results[1])
+                def lnight = Utils.wToDba(results[2])
+                // fill the LW_ROADS table
+                ps.addBatch(rs.getLong(pkIndex) as Integer, geo as Geometry,
+                        lday[0] as Double, lday[1] as Double, lday[2] as Double,
+                        lday[3] as Double, lday[4] as Double, lday[5] as Double,
+                        lday[6] as Double, lday[7] as Double,
+                        levening[0] as Double, levening[1] as Double, levening[2] as Double,
+                        levening[3] as Double, levening[4] as Double, levening[5] as Double,
+                        levening[6] as Double, levening[7] as Double,
+                        lnight[0] as Double, lnight[1] as Double, lnight[2] as Double,
+                        lnight[3] as Double, lnight[4] as Double, lnight[5] as Double,
+                        lnight[6] as Double, lnight[7] as Double)
+            } else {
+                // Compute emission sound level for each road segment
+                def results = noiseEmissionMaker.computeLw(rs)
+                def lw = Utils.wToDba(results[0])
+                def time = rs.getInt("TIME")
+                def link_id = rs.getString("LINK_ID")
+                // fill the LW_ROADS table
+                ps.addBatch(link_id as String, geo as Geometry, time as Integer,
+                        lw[0] as Double, lw[1] as Double, lw[2] as Double,
+                        lw[3] as Double, lw[4] as Double, lw[5] as Double,
+                        lw[6] as Double, lw[7] as Double)
+
+            }
         }
     }
 
     // Add Z dimension to the road segments
     sql.execute("UPDATE LW_ROADS SET THE_GEOM = ST_UPDATEZ(The_geom,0.05);")
 
+
     // Add primary key to the road table
-    sql.execute("ALTER TABLE LW_ROADS ALTER COLUMN PK INT NOT NULL;")
-    sql.execute("ALTER TABLE LW_ROADS ADD PRIMARY KEY (PK);  ")
+    if (mode == "") {
+        sql.execute("ALTER TABLE LW_ROADS ALTER COLUMN PK INT NOT NULL;")
+        sql.execute("ALTER TABLE LW_ROADS ADD PRIMARY KEY (PK);  ")
+    } else {
+        sql.execute("DROP TABLE IF EXISTS unique_roads;")
+        sql.execute("CREATE TABLE unique_roads AS " +
+                "SELECT DISTINCT link_id, the_geom " +
+                "FROM LW_ROADS;")
+
+        sql.execute("DROP TABLE IF EXISTS SOURCES_0DB;")
+        sql.execute("CREATE TABLE SOURCES_0DB (LINK_ID VARCHAR(255), THE_GEOM GEOMETRY, HZ63 FLOAT, HZ125 FLOAT, HZ250 FLOAT, HZ500 FLOAT, HZ1000 FLOAT, HZ2000 FLOAT, HZ4000 FLOAT, HZ8000 FLOAT) AS SELECT a.link_id LINK_ID, a.the_geom THE_GEOM, 0.0 HZ63, 0.0 HZ125, 0.0 HZ250, 0.0 HZ500, 0.0 HZ1000, 0.0  HZ2000, 0.0 HZ4000, 0.0 HZ8000  FROM unique_roads a;");
+        sql.execute("ALTER TABLE SOURCES_0DB ADD PK INT AUTO_INCREMENT PRIMARY KEY;")
+
+        sql.execute("DROP TABLE IF EXISTS unique_roads;")
+
+    }
 
     resultString = "Calculation Done ! The table LW_ROADS has been created."
 

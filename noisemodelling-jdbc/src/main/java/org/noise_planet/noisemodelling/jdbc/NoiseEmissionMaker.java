@@ -333,41 +333,41 @@ public class NoiseEmissionMaker extends Scene {
         int way = 3; // default value 2-way road
 
         // Read fields
-        if(sourceFields.containsKey("LV_SPD_"+period)) {
-            lv_speed = rs.getDouble(sourceFields.get("LV_SPD_"+period));
+        if(sourceFields.containsKey("LV_SPD"+period)) {
+            lv_speed = rs.getDouble(sourceFields.get("LV_SPD"+period));
         }
-        if(sourceFields.containsKey("MV_SPD_"+period)) {
-            mv_speed = rs.getDouble(sourceFields.get("MV_SPD_"+period));
+        if(sourceFields.containsKey("MV_SPD"+period)) {
+            mv_speed = rs.getDouble(sourceFields.get("MV_SPD"+period));
         }
-        if(sourceFields.containsKey("HGV_SPD_"+period)) {
-            hgv_speed = rs.getDouble(sourceFields.get("HGV_SPD_"+period));
+        if(sourceFields.containsKey("HGV_SPD"+period)) {
+            hgv_speed = rs.getDouble(sourceFields.get("HGV_SPD"+period));
         }
-        if(sourceFields.containsKey("WAV_SPD_"+period)) {
-            wav_speed = rs.getDouble(sourceFields.get("WAV_SPD_"+period));
+        if(sourceFields.containsKey("WAV_SPD"+period)) {
+            wav_speed = rs.getDouble(sourceFields.get("WAV_SPD"+period));
         }
-        if(sourceFields.containsKey("WBV_SPD_"+period)) {
-            wbv_speed = rs.getDouble(sourceFields.get("WBV_SPD_"+period));
+        if(sourceFields.containsKey("WBV_SPD"+period)) {
+            wbv_speed = rs.getDouble(sourceFields.get("WBV_SPD"+period));
         }
-        if(sourceFields.containsKey("LV_"+period)) {
-            lvPerHour = rs.getDouble(sourceFields.get("LV_"+period));
+        if(sourceFields.containsKey("LV"+period)) {
+            lvPerHour = rs.getDouble(sourceFields.get("LV"+period));
         }
-        if(sourceFields.containsKey("MV_"+period)) {
-            mvPerHour = rs.getDouble(sourceFields.get("MV_"+period));
+        if(sourceFields.containsKey("MV"+period)) {
+            mvPerHour = rs.getDouble(sourceFields.get("MV"+period));
         }
-        if(sourceFields.containsKey("HGV_"+period)) {
-            hgvPerHour = rs.getDouble(sourceFields.get("HGV_"+period));
+        if(sourceFields.containsKey("HGV"+period)) {
+            hgvPerHour = rs.getDouble(sourceFields.get("HGV"+period));
         }
-        if(sourceFields.containsKey("WAV_"+period)) {
-            wavPerHour = rs.getDouble(sourceFields.get("WAV_"+period));
+        if(sourceFields.containsKey("WAV"+period)) {
+            wavPerHour = rs.getDouble(sourceFields.get("WAV"+period));
         }
-        if(sourceFields.containsKey("WBV_"+period)) {
-            wbvPerHour = rs.getDouble(sourceFields.get("WBV_"+period));
+        if(sourceFields.containsKey("WBV"+period)) {
+            wbvPerHour = rs.getDouble(sourceFields.get("WBV"+period));
         }
         if(sourceFields.containsKey("PVMT")) {
             roadSurface= rs.getString(sourceFields.get("PVMT"));
         }
-        if(sourceFields.containsKey("TEMP_"+period)) {
-            temperature = rs.getDouble(sourceFields.get("TEMP_"+period));
+        if(sourceFields.containsKey("TEMP"+period)) {
+            temperature = rs.getDouble(sourceFields.get("TEMP"+period));
         }
         if(sourceFields.containsKey("TS_STUD")) {
             tsStud = rs.getDouble(sourceFields.get("TS_STUD"));
@@ -394,14 +394,14 @@ public class NoiseEmissionMaker extends Scene {
 
 
         // old fields
-        if(sourceFields.containsKey("TV_"+period)) {
-            tv = rs.getDouble(sourceFields.get("TV_"+period));
+        if(sourceFields.containsKey("TV"+period)) {
+            tv = rs.getDouble(sourceFields.get("TV"+period));
         }
-        if(sourceFields.containsKey("HV_"+period)) {
-            hv = rs.getDouble(sourceFields.get("HV_"+period));
+        if(sourceFields.containsKey("HV"+period)) {
+            hv = rs.getDouble(sourceFields.get("HV"+period));
         }
-        if(sourceFields.containsKey("HV_SPD_"+period)) {
-            hgv_speed = rs.getDouble(sourceFields.get("HV_SPD_"+period));
+        if(sourceFields.containsKey("HV_SPD"+period)) {
+            hgv_speed = rs.getDouble(sourceFields.get("HV_SPD"+period));
         }
 
         if(tv > 0) {
@@ -439,7 +439,7 @@ public class NoiseEmissionMaker extends Scene {
         double[] ln = new double[noiseMapParameters.attenuationCnossosParametersDay.freq_lvl.size()];
 
         if (noiseMapParameters.input_mode == NoiseMapParameters.INPUT_MODE.INPUT_MODE_PROBA) {
-            double val = dbaToW(90.0);
+            double val = dbaToW(0.0);
             for(int idfreq = 0; idfreq < noiseMapParameters.attenuationCnossosParametersDay.freq_lvl.size(); idfreq++) {
                 ld[idfreq] = dbaToW(val);
                 le[idfreq] = dbaToW(val);
@@ -462,6 +462,13 @@ public class NoiseEmissionMaker extends Scene {
                     ln[idfreq] = dbaToW(rs.getDouble(noiseMapParameters.lwFrequencyPrepend + "N" + noiseMapParameters.attenuationCnossosParametersDay.freq_lvl.get(idfreq)));
                 }
             }
+        } else if (noiseMapParameters.input_mode == NoiseMapParameters.INPUT_MODE.INPUT_MODE_LW_HZ) {
+            // Read average 24h traffic
+
+            for (int idfreq = 0; idfreq < noiseMapParameters.attenuationCnossosParametersDay.freq_lvl.size(); idfreq++) {
+                ld[idfreq] = dbaToW(rs.getDouble( "HZ" + noiseMapParameters.attenuationCnossosParametersDay.freq_lvl.get(idfreq)));
+            }
+
         } else if(noiseMapParameters.input_mode == NoiseMapParameters.INPUT_MODE.INPUT_MODE_TRAFFIC_FLOW) {
             // Extract road slope
             double slope = 0;
@@ -481,13 +488,34 @@ public class NoiseEmissionMaker extends Scene {
                 // ignore
             }
             // Day
-            ld = dbaToW(getEmissionFromResultSet(rs, "D", slope));
+            ld = dbaToW(getEmissionFromResultSet(rs, "_D", slope));
 
             // Evening
-            le = dbaToW(getEmissionFromResultSet(rs, "E", slope));
+            le = dbaToW(getEmissionFromResultSet(rs, "_E", slope));
 
             // Night
-            ln = dbaToW(getEmissionFromResultSet(rs, "N", slope));
+            ln = dbaToW(getEmissionFromResultSet(rs, "_N", slope));
+
+        }else if(noiseMapParameters.input_mode == NoiseMapParameters.INPUT_MODE.INPUT_MODE_TRAFFIC_FLOW_NOT_DEN) {
+            // Extract road slope
+            double slope = 0;
+            try {
+                Geometry g = rs.getGeometry();
+                if(profileBuilder!=null && g != null && !g.isEmpty()) {
+                    Coordinate[] c = g.getCoordinates();
+                    if(c.length >= 2) {
+                        double z0 = profileBuilder.getZ(c[0]);
+                        double z1 = profileBuilder.getZ(c[1]);
+                        if(!Double.isNaN(z0) && !Double.isNaN(z1)) {
+                            slope = Utils.computeSlope(z0, z1, g.getLength());
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                // ignore
+            }
+            // Day
+            ld = dbaToW(getEmissionFromResultSet(rs, "", slope));
 
         }
         return new double[][] {ld, le, ln};

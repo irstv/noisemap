@@ -160,6 +160,7 @@ Fundings
     Noise_Map_From_OSM_Tutorial
     Noise_Map_From_Point_Source
     Matsim_Tutorial
+    Dynamic_Tutorial
     Get_Started_Script
     Tutorials_FAQ
 

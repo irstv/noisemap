@@ -8,13 +8,10 @@ Below is a non-exhaustive list of articles or presentations in which NoiseModell
 Standard Noise maps
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-BACLET S., VENKATARAMAN S., RUMPLER R., BILLSJÖ R., HORVATH J., ÖSTERLUND P. E., , `From strategic noise maps to receiver-centric noise exposure sensitivity mapping <https://www.sciencedirect.com/science/article/pii/S1361920921004089>`_, Transportation Research Part D: Transport and Environment, 2022, vol. 102 *(Noise mapping, Road traffic noise, Population exposure, Road network sensitivity)*
 
 GRAZIUSO G., FRANCAVILLA A. B., MANCINI S., GUARNACCIA C., `Open-source software tools for strategic noise mapping: a case study <https://iopscience.iop.org/article/10.1088/1742-6596/2162/1/012014>`_, Journal of Physics: Conference Series, 2022, vol. 2162, 012014
 
 AUMOND P., BOCHER E., ECOTIERE D., FORTIN N., GAUVREAU B., GUILLAUME G., PETIT G., `Improvement of city noise map production processes and sensitivity analysis to noise models inputs <http://www.sea-acustica.es/fileadmin/Madeira21/ID122.pdf>`_, Euronoise Conference Proceedings, 2021, p. 1128
-
-BACLET S., VENKATARAMAN S., RUMPLER R., `A methodology to assess the impact of driving noise from individual vehicles in an urban environment <http://axaco.s3.amazonaws.com/uploads/2021/06/07/MIHmJYsH/rev2021-032.pdf>`_, Resource Efficient Vehicles Conference, 2021.
 
 NOURMOHAMMADI Z., LILASATHAPORNKIT T., ASHFAQ M., et al., `Mapping Urban Environmental Performance with Emerging Data Sources: A Case of Urban Greenery and Traffic Noise in Sydney, Australia <https://www.mdpi.com/2071-1050/13/2/605>`_, Sustainability, 2021, vol. 13, n° 2, p. 605
 
@@ -27,6 +24,12 @@ AUMOND P., FORTIN N., CAN A., `Overview of the NoiseModelling open-source softwa
 
 Dynamic Noise maps
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+MONTENEGRO, A. L., MELLUSO, D., STASI, G., PANCI, A., BOLOGNESE, M., PALAZZUOLI, D., ... & LICITRA, G., `An open-source pipeline in noise modelling and noise exposure reduction in a port city.<https://www.researchgate.net/profile/Alexandra-Montenegro/publication/382072874_An_open-source_pipeline_in_noise_modelling_and_noise_exposure_reduction_in_a_port_city/links/668bdf59f3b61c4e2cb7e962/An-open-source-pipeline-in-noise-modelling-and-noise-exposure-reduction-in-a-port-city.pdf>`_, In Proceedings of the 30th International Congress on Sound and Vibration (ICSV30), 2024.
+
+BACLET S., VENKATARAMAN S., RUMPLER R., BILLSJÖ R., HORVATH J., ÖSTERLUND P. E., `From strategic noise maps to receiver-centric noise exposure sensitivity mapping <https://www.sciencedirect.com/science/article/pii/S1361920921004089>`_, Transportation Research Part D: Transport and Environment, 2022, vol. 102 *(Noise mapping, Road traffic noise, Population exposure, Road network sensitivity)*
+
+BACLET S., VENKATARAMAN S., RUMPLER R., `A methodology to assess the impact of driving noise from individual vehicles in an urban environment <http://axaco.s3.amazonaws.com/uploads/2021/06/07/MIHmJYsH/rev2021-032.pdf>`_, Resource Efficient Vehicles Conference, 2021.
 
 LE BESCOND V., CAN A., AUMOND P., GASTINEAU P., `Open-source modeling chain for the dynamic assessment of road traffic noise exposure <https://www.sciencedirect.com/science/article/pii/S1361920921000973>`_, Transportation Research Part D: Transport and Environment, 2021, vol. 94, 102793 (Watch a `short presentation <https://youtu.be/jNCG0qQrsrE>`_ on Youtube)
 

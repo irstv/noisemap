@@ -274,6 +274,12 @@ inputs = [
                 min        : 0, max: 1,
                 type       : String.class
         ],
+        maxError            : [
+                name       : 'maxError',
+                title      : 'maxError',
+                description: 'maxError',
+                min        : 0, max: 1, type: Double.class
+        ],
         confRaysName            : [
                 name       : '',
                 title      : 'Export scene',
@@ -368,7 +374,7 @@ def run(input) {
     }
 }
 
-static void exportScene(String name, ProfileBuilder builder, AttenuationCnossosParameters result, int crs) throws IOException {
+static void exportScene(String name, ProfileBuilder builder, NoiseMap result, int crs) throws IOException {
     try {
         FileOutputStream outData = new FileOutputStream(name);
         KMLDocument kmlDocument = new KMLDocument(outData);
@@ -510,6 +516,11 @@ def exec(Connection connection, input) {
         reflexion_order = Integer.valueOf(input['confReflOrder'])
     }
 
+    double maxError = 0.1
+    if (input['maxError']) {
+        maxError = Double.valueOf(input['maxError'])
+    }
+
     double max_src_dist = 150
     if (input['confMaxSrcDist']) {
         max_src_dist = Double.valueOf(input['confMaxSrcDist'])
@@ -560,6 +571,11 @@ def exec(Connection connection, input) {
         confSkipLden = input['confSkipLden']
     }
 
+    boolean confSkipAll = false;
+    if (confSkipLday && confSkipLevening && confSkipLnight && confSkipLden) {
+        confSkipAll = true;
+    }
+
     boolean confExportSourceId = false;
     if (input['confExportSourceId']) {
         confExportSourceId = input['confExportSourceId']
@@ -577,12 +593,20 @@ def exec(Connection connection, input) {
     // --------------------------------------------
 
     NoiseMapByReceiverMaker pointNoiseMap = new NoiseMapByReceiverMaker(building_table_name, sources_table_name, receivers_table_name)
+
     NoiseMapParameters ldenConfig = new NoiseMapParameters(NoiseMapParameters.INPUT_MODE.INPUT_MODE_LW_DEN)
+    if (confSkipAll) {
+        ldenConfig = new NoiseMapParameters(NoiseMapParameters.INPUT_MODE.INPUT_MODE_LW_HZ)
+        confSkipLday = false
+    }
 
     ldenConfig.setComputeLDay(!confSkipLday)
     ldenConfig.setComputeLEvening(!confSkipLevening)
     ldenConfig.setComputeLNight(!confSkipLnight)
     ldenConfig.setComputeLDEN(!confSkipLden)
+
+
+
     ldenConfig.setMergeSources(!confExportSourceId)
     //ldenConfig.setExportReceiverPosition(true)
     ldenConfig.setlDayTable("LDAY_GEOM")
@@ -627,7 +651,7 @@ def exec(Connection connection, input) {
             ldenConfig.setExportRaysMethod(NoiseMapParameters.ExportRaysMethods.TO_RAYS_TABLE)
             ldenConfig.setRaysTable(input['confRaysName'] as String)
         }
-        ldenConfig.setKeepAbsorption(true);
+        //ldenConfig.setKeepAbsorption(true);
         ldenConfig.setMaximumRaysOutputCount(maximumRaysToExport);
     }
 
@@ -714,7 +738,7 @@ def exec(Connection connection, input) {
 
     // Do not propagate for low emission or far away sources
     // Maximum error in dB
-    pointNoiseMap.setMaximumError(0.1d)
+    pointNoiseMap.setMaximumError(maxError)
     // Init Map
     pointNoiseMap.initialize(connection, new EmptyProgressVisitor())
 
@@ -752,8 +776,8 @@ def exec(Connection connection, input) {
             // Run ray propagation
             IComputePathsOut out = pointNoiseMap.evaluateCell(connection, cellIndex.getLatitudeIndex(), cellIndex.getLongitudeIndex(), progressVisitor, receivers)
             // Export as a Google Earth 3d scene
-            if (out instanceof AttenuationCnossosParameters && folderExportKML != null) {
-                AttenuationCnossosParameters cellStorage = (AttenuationCnossosParameters) out;
+            if (out instanceof NoiseMap && folderExportKML != null) {
+                NoiseMap cellStorage = (NoiseMap) out;
                 exportScene(new File(folderExportKML.getPath(),
                         String.format(Locale.ROOT, kmlFileNamePrepend + "_%d_%d.kml", cellIndex.getLatitudeIndex(),
                                 cellIndex.getLongitudeIndex())).getPath(),

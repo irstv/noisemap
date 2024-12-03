@@ -24,7 +24,7 @@ public class NoiseMapParameters {
     }
 
     public enum TIME_PERIOD {DAY, EVENING, NIGHT}
-    public enum INPUT_MODE { INPUT_MODE_TRAFFIC_FLOW, INPUT_MODE_LW_DEN, INPUT_MODE_PROBA}
+    public enum INPUT_MODE { INPUT_MODE_TRAFFIC_FLOW,INPUT_MODE_TRAFFIC_FLOW_NOT_DEN, INPUT_MODE_LW_DEN,INPUT_MODE_LW_HZ, INPUT_MODE_PROBA}
     final INPUT_MODE input_mode;
     boolean exportProfileInRays = false;
     boolean keepAbsorption = false; // in rays, keep store detailed absorption data
