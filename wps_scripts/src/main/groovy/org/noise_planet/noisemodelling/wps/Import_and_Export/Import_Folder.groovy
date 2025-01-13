@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory
 
 import java.sql.Connection
 import java.sql.ResultSet
+import java.sql.SQLException
 import java.sql.Statement
 
 title = 'Import all files from a folder'
@@ -229,16 +230,21 @@ def exec(Connection connection, input) {
                 // Replace default SRID by the srid of the table
                 if (tableSrid != 0) srid = tableSrid
 
-                // Display the actual SRID in the command window
-                logger.info("The SRID of the table " + outputTableName + " is " + srid)
 
                 // If the table does not have an associated SRID, add a SRID
                 if (tableSrid == 0) {
                     Statement st = connection.createStatement()
-                    GeometryMetaData metaData = GeometryTableUtilities.getMetaData(connection, outputTableIdentifier, spatialFieldNames.get(0));
-                    metaData.setSRID(srid);
-                    st.execute(String.format("ALTER TABLE %s ALTER COLUMN %s %s USING ST_SetSRID(%s,%d)", outputTableIdentifier, spatialFieldNames.get(0), metaData.getSQL(),spatialFieldNames.get(0) ,srid))
+                    try {
+                        st.execute(String.format(Locale.ROOT,
+                                "SELECT UpdateGeometrySRID('%s', '%s', %d);",
+                                outputTableIdentifier, spatialFieldNames.get(0), srid))
+                    } catch (SQLException ex) {
+                        logger.error("Failed to convert the SRID of the file:\n{}", pathFile, ex)
+                    }
                 }
+
+                // Display the actual SRID in the command window
+                logger.info("The SRID of the table " + outputTableName + " is " + srid + " was " + tableSrid)
             }
 
             // If the table has a PK column and doesn't have any Primary Key Constraint, then automatically associate a Primary Key

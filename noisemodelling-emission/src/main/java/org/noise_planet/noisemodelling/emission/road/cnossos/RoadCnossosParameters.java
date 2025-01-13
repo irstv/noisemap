@@ -34,7 +34,7 @@ public class RoadCnossosParameters {
     private double qStudRatio; // Average ratio of the total volume of light vehicles per hour equipped with studded tyres during the period Ts_stud (in months)
 
 
-    private double Junc_dist; // Distance to junction
+    private double Junc_dist = 250; // Distance to junction
     private int Junc_type; // Junction type (k=1 traffic lights, k=2 roundabout)
 
     private double slopePercentage = 0; // slope s (in %), In the case of a bi-directional traffic flow, it is necessary to split the flow into two components and correct half for uphill and half for downhill.

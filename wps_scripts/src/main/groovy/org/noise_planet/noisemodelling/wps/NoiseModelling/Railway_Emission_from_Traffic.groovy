@@ -23,7 +23,7 @@ import org.h2gis.utilities.SpatialResultSet
 import org.h2gis.utilities.TableLocation
 import org.h2gis.utilities.dbtypes.DBUtils
 import org.h2gis.utilities.wrapper.ConnectionWrapper
-import org.noise_planet.noisemodelling.jdbc.utils.MakeLWTable
+import org.noise_planet.noisemodelling.jdbc.NoiseEmissionMaker
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -38,47 +38,47 @@ import java.sql.SQLException
 
 title = 'Compute railway emission noise map from vehicule, traffic table AND section table.'
 description = '&#10145;&#65039; Compute Rail Emission Noise Map from Day, Evening and Night traffic flow rate and speed estimates (specific format, see input details). </br>' +
-              '<hr>' +
-              '&#x2705; The output table is called <b>LW_RAILWAY</b>'
+        '<hr>' +
+        '&#x2705; The output table is called <b>LW_RAILWAY</b>'
 
 inputs = [
         tableRailwayTraffic: [
-            name : 'Railway traffic table name',
-            title : 'Railway traffic table name',
-            description : '<b>Name of the Rail traffic table.</b>  </br><br>' +
-                          'This function recognize the following columns (* mandatory): </br><ul>' +
-                          '<li><b>IDTRAFFIC</b>* : A traffic identifier (PRIMARY KEY) (INTEGER) </li>' +
-                          '<li><b>IDSECTION</b>* : A section identifier, refering to RAIL_SECTIONS table (INTEGER)</li>' +
-                          '<li><b>TRAINTYPE</b>* : Type of vehicle, listed in the <a href="https://github.com/Universite-Gustave-Eiffel/NoiseModelling/blob/4.X/noisemodelling-emission/src/main/resources/org/noise_planet/noisemodelling/emission/Rail_Train_SNCF_2021.json" target="_blank">Rail_Train_SNCF_2021</a> file (mainly for french SNCF) (STRING)</li>' +
-                          '<li><b>TRAINSPD</b>* : Maximum Train speed (in km/h) (DOUBLE)</li>' +
-                          '<li><b>TDAY</b>, <b>TEVENING</b> and <b>TNIGHT</b> : Hourly average train count (6-18h)(18-22h)(22-6h) (INTEGER)</li></ul>', 
-            type: String.class
-            ],
+                name : 'Railway traffic table name',
+                title : 'Railway traffic table name',
+                description : '<b>Name of the Rail traffic table.</b>  </br><br>' +
+                        'This function recognize the following columns (* mandatory): </br><ul>' +
+                        '<li><b>IDTRAFFIC</b>* : A traffic identifier (PRIMARY KEY) (INTEGER) </li>' +
+                        '<li><b>IDSECTION</b>* : A section identifier, refering to RAIL_SECTIONS table (INTEGER)</li>' +
+                        '<li><b>TRAINTYPE</b>* : Type of vehicle, listed in the <a href="https://github.com/Universite-Gustave-Eiffel/NoiseModelling/blob/4.X/noisemodelling-emission/src/main/resources/org/noise_planet/noisemodelling/emission/Rail_Train_SNCF_2021.json" target="_blank">Rail_Train_SNCF_2021</a> file (mainly for french SNCF) (STRING)</li>' +
+                        '<li><b>TRAINSPD</b>* : Maximum Train speed (in km/h) (DOUBLE)</li>' +
+                        '<li><b>TDAY</b>, <b>TEVENING</b> and <b>TNIGHT</b> : Hourly average train count (6-18h)(18-22h)(22-6h) (INTEGER)</li></ul>',
+                type: String.class
+        ],
         tableRailwayTrack  : [
-            name : 'RailWay Geom table name', 
-            title : 'RailWay Track table name', 
-            description : '<b>Name of the Railway Track table.</b> </br><br>' +
-                          'This function recognize the following columns (* mandatory): </br><ul>' +
-                          '<li><b>IDSECTION</b>* : A section identifier (PRIMARY KEY) (INTEGER)</li>' +
-                          '<li><b>NTRACK</b>* : Number of tracks (INTEGER)</li>' +
-                          '<li><b>TRACKSPD</b>* : Maximum speed on the section (in km/h) (DOUBLE)</li>' +
-                          '<li><b>TRANSFER</b> : Track transfer function identifier (INTEGER)</li>' +
-                          '<li><b>ROUGHNESS</b> : Rail roughness identifier (INTEGER)</li>' +
-                          '<li><b>IMPACT</b> : Impact noise coefficient identifier (INTEGER)</li>' +
-                          '<li><b>CURVATURE</b> : Listed code describing the curvature of the section (INTEGER)</li>' +
-                          '<li><b>BRIDGE</b> : Bridge transfer function identifier (INTEGER)</li>' +
-                          '<li><b>TRACKSPD</b> : Commercial speed on the section (in km/h) (DOUBLE)</li>' +
-                          '<li><b>ISTUNNEL</b> : Indicates whether the section is a tunnel or not (0 = no / 1 = yes) (BOOLEAN) </li></ul>', 
-            type: String.class
-            ]
+                name : 'RailWay Geom table name',
+                title : 'RailWay Track table name',
+                description : '<b>Name of the Railway Track table.</b> </br><br>' +
+                        'This function recognize the following columns (* mandatory): </br><ul>' +
+                        '<li><b>IDSECTION</b>* : A section identifier (PRIMARY KEY) (INTEGER)</li>' +
+                        '<li><b>NTRACK</b>* : Number of tracks (INTEGER)</li>' +
+                        '<li><b>TRACKSPD</b>* : Maximum speed on the section (in km/h) (DOUBLE)</li>' +
+                        '<li><b>TRANSFER</b> : Track transfer function identifier (INTEGER)</li>' +
+                        '<li><b>ROUGHNESS</b> : Rail roughness identifier (INTEGER)</li>' +
+                        '<li><b>IMPACT</b> : Impact noise coefficient identifier (INTEGER)</li>' +
+                        '<li><b>CURVATURE</b> : Listed code describing the curvature of the section (INTEGER)</li>' +
+                        '<li><b>BRIDGE</b> : Bridge transfer function identifier (INTEGER)</li>' +
+                        '<li><b>TRACKSPD</b> : Commercial speed on the section (in km/h) (DOUBLE)</li>' +
+                        '<li><b>ISTUNNEL</b> : Indicates whether the section is a tunnel or not (0 = no / 1 = yes) (BOOLEAN) </li></ul>',
+                type: String.class
+        ]
 ]
 
-outputs = [result: [name: 'Result output string', 
-                    title: 'Result output string', 
-                    description: 'This type of result does not allow the blocks to be linked together.', 
+outputs = [result: [name: 'Result output string',
+                    title: 'Result output string',
+                    description: 'This type of result does not allow the blocks to be linked together.',
                     type: String.class
-                    ]
-           ]
+]
+]
 
 // Open Connection to Geoserver
 static Connection openGeoserverDataStoreConnection(String dbName) {
@@ -156,7 +156,7 @@ def exec(Connection connection, input) {
         System.println('The table Rail Geom has ' + nSection + ' rail segments.')
     }
 
-    MakeLWTable.makeTrainLWTable(connection, sources_geom_table_name, sources_table_traffic_name,
+    NoiseEmissionMaker.makeTrainLWTable(connection, sources_geom_table_name, sources_table_traffic_name,
             "LW_RAILWAY")
 
     TableLocation alterTable = TableLocation.parse("LW_RAILWAY", DBUtils.getDBType(connection))

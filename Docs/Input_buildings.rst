@@ -93,7 +93,7 @@ Below is an example with a initial geometry (coordinates are exprimed in French 
 
 .. _EPSG:2154 : https://epsg.io/2154
 
-Ray path 
+Ray path
 -----------------------
 
 Depending on the building modelisation and the ``Zobject`` you have, the acoustic wave path will differ.

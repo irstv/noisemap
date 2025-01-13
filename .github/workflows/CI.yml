@@ -5,15 +5,19 @@ on: [ push, pull_request, workflow_dispatch ]
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          # must specify password for PG Docker container image, see: https://registry.hub.docker.com/_/postgres?tab=description&page=1&name=10
+          POSTGRES_USER: noisemodelling
+          POSTGRES_PASSWORD: noisemodelling
+          POSTGRES_DB: noisemodelling_db
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - uses: SPalominos/PostGIS-Installer-Action@v1.0.1
-        with:
-          psql_version: '9.6'
-          pgis_version: '2.5'
-          docker_image: 'postgis/postgis'
-          db_password: 'orbisgis'
-          db_user: 'orbisgis'
-          db_name: 'orbisgis_db'
       - uses: actions/checkout@v2
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -23,9 +27,12 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Building
-        run: |
-          mvn test install -B
-          cd wps_scripts && ./gradlew test --info --stacktrace
+        run: mvn test install -B
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build and test WPS with Gradle
+        run:  ./gradlew build --info --stacktrace
+        working-directory: ./wps_scripts
       - name: Deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -35,7 +42,7 @@ jobs:
       - name: Clean
         run: rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             $HOME/.m2/

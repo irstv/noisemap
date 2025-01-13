@@ -1,0 +1,58 @@
+{
+  "cutPoints" : [ {
+    "type" : "Source",
+    "coordinate" : {
+      "x" : 0.0,
+      "y" : 10.0,
+      "z" : 1.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5,
+    "sourcePk" : -1,
+    "li" : 1.0,
+    "orientation" : {
+      "yaw" : 0.0,
+      "pitch" : 0.0,
+      "roll" : 0.0
+    }
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 0.0,
+      "y" : 10.0,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "VEdgeDiffraction",
+    "coordinate" : {
+      "x" : 11.989393398282202,
+      "y" : 18.010606601717797,
+      "z" : 3.1989393398282195
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "VEdgeDiffraction",
+    "coordinate" : {
+      "x" : 14.5,
+      "y" : 19.015,
+      "z" : 3.6257499999999996
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "Receiver",
+    "coordinate" : {
+      "x" : 30.0,
+      "y" : 20.0,
+      "z" : 6.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5,
+    "receiverPk" : -1
+  } ],
+  "hasBuildingIntersection" : false,
+  "hasTopographyIntersection" : false
+}

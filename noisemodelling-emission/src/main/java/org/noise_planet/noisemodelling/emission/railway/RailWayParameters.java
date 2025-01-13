@@ -48,12 +48,23 @@ public class RailWayParameters {
         this.railwaySourceList = railwaySourceList;
     }
 
+    /**
+     * method adds a railway source to the list of railway sources, associating it with a specified ID.
+     * @param ID
+     * @param lineSource
+     */
     public void addRailwaySource(String ID, LineSource lineSource) {
         this.railwaySourceList.put(ID, lineSource);
     }
 
+    /**
+     *
+     * @param lineSource1
+     * @param lineSource2
+     * @return an instance of RailWayParameters
+     */
     public RailWayParameters sumRailwaySource(RailWayParameters lineSource1, RailWayParameters lineSource2) {
-        if (lineSource2.getRailwaySourceList().size()>0){
+        if (!lineSource2.getRailwaySourceList().isEmpty()){
             for (Map.Entry<String, LineSource> railwaySourceEntry : lineSource1.getRailwaySourceList().entrySet()) {
                 double[]  lW1 = railwaySourceEntry.getValue().getlW();
                 double[]  lW2 = lineSource2.getRailwaySourceList().get(railwaySourceEntry.getKey()).getlW();
@@ -63,6 +74,12 @@ public class RailWayParameters {
         return lineSource1;
     }
 
+    /**
+     *
+     * @param Qm
+     * @param vm
+     * @throws IOException
+     */
     public void appendVperHour(double Qm, double vm) throws IOException {
         for (Map.Entry<String, LineSource> railwaySourceEntry : railwaySourceList.entrySet()) {
             double[] lW ;

@@ -43,6 +43,12 @@ public class RailwayCnossos extends org.noise_planet.noisemodelling.emission.rai
     public RailwayCnossos() {
     }
 
+
+    /**
+     *
+     * @param inputStream
+     * @return
+     */
     private static JsonNode parse(InputStream inputStream) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -52,6 +58,12 @@ public class RailwayCnossos extends org.noise_planet.noisemodelling.emission.rai
         }
     }
 
+    /**
+     *
+     * @param iterator
+     * @return an iterator
+     * @param <T>
+     */
     public static <T> Iterable<T> iteratorToIterable(Iterator<T> iterator) {
         return () -> iterator;
     }
@@ -114,7 +126,15 @@ public class RailwayCnossos extends org.noise_planet.noisemodelling.emission.rai
         return nbCoach;
     }
 
-
+    /**
+     *
+     * @param typeVehicle
+     * @param runningCondition
+     * @param sourceHeightId
+     * @param fileVersion
+     * @param freqId
+     * @return
+     */
     public double getTractionNoise(String typeVehicle, int runningCondition, String sourceHeightId, String fileVersion, int freqId) { //
         int refId = getVehicleNode(typeVehicle).get("RefTraction").intValue();
         double tractionSpectre =0;
@@ -146,30 +166,74 @@ public class RailwayCnossos extends org.noise_planet.noisemodelling.emission.rai
         return tractionSpectre;
     }
 
+    /**
+     * retrieve the aerodynamic noise value for a specific type of vehicle, source height, file version, and frequency ID
+     * by accessing the corresponding data from the vehicle node, railway data, and noise values.
+     * @param typeVehicle
+     * @param sourceHeightId
+     * @param fileVersion
+     * @param freqId
+     * @return
+     */
     public double getAerodynamicNoise(String typeVehicle, String sourceHeightId, String fileVersion, int freqId) { //
         int refId = getVehicleNode(typeVehicle).get("RefAerodynamic").intValue();
         return getRailWayData().get("Vehicle").get("AerodynamicNoise").get(String.valueOf(refId)).get("Values").get(sourceHeightId).get(freqId).doubleValue();
     }
 
-
+    /**
+     * retrieves the structural constant for a specific bridge and frequency ID
+     * by accessing the corresponding data from the railway track's bridge constants.
+     * @param bridgeId
+     * @param freqId
+     * @return
+     */
     public Double getBridgeStructural(int bridgeId, int freqId) {
         return getRailWayData().get("Track").get("BridgeConstant").get(String.valueOf(bridgeId)).get("Values").get(freqId).doubleValue();
     }
 
+
+    /**
+     * fetches and returns the transfer value from the railway data for a specific track transfer ID and frequency ID.
+     * @param trackTransferId
+     * @param freqId
+     * @return
+     */
     public Double getTrackTransfer(int trackTransferId,  int freqId) { //
         return getRailWayData().get("Track").get("TrackTransfer").get(String.valueOf(trackTransferId)).get("Spectre").get(freqId).doubleValue();
     }
 
+    /**
+     *  fetches and returns the impact noise value from the railway data for a specific impact noise ID and frequency ID.
+     * @param impactNoiseId
+     * @param freqId
+     * @return
+     */
     public Double getImpactNoise(int impactNoiseId,  int freqId) { //
         return getRailWayData().get("Track").get("ImpactNoise").get(String.valueOf(impactNoiseId)).get("Values").get(freqId).doubleValue();
     }
 
+    /**
+     * retrieve and return the transfer value associated with a given vehicle type and a specific frequency ID.
+     * @param typeVehicle
+     * @param freqId
+     * @return
+     */
     public Double getVehTransfer(String typeVehicle,  int freqId) {
         int RefTransfer = getVehicleNode(typeVehicle).get("RefTransfer").intValue();
         return getRailWayData().get("Vehicle").get("Transfer").get(String.valueOf(RefTransfer)).get("Spectre").get(freqId).doubleValue();
 
     }
 
+
+    /**
+     * calculates the total roughness level for a specific type of vehicle,
+     * track roughness, vehicle file version, and lambda ID by retrieving the wheel roughness and track roughness
+     * @param typeVehicle
+     * @param trackRoughnessId
+     * @param vehicleFileVersion
+     * @param idLambda
+     * @return
+     */
     public Double getLRoughness(String typeVehicle, int trackRoughnessId, String vehicleFileVersion,  int idLambda) { //
         double wheelRoughness = getWheelRoughness(typeVehicle, vehicleFileVersion, idLambda);
         double trackRoughness = getTrackRoughness(trackRoughnessId, idLambda);
@@ -345,6 +409,19 @@ public class RailwayCnossos extends org.noise_planet.noisemodelling.emission.rai
         return lW;
     }
 
+
+    /**
+     * method calculates the overall sound power level for a specific type of vehicle, track roughness,
+     * impact ID, bridge ID, speed, track file version, and number of axles per vehicle
+     * @param typeVehicle
+     * @param trackRoughnessId
+     * @param impactId
+     * @param bridgeId
+     * @param speed
+     * @param trackFileVersion
+     * @param axlesPerVeh
+     * @return
+     */
     private double[] getLWBridge(String typeVehicle, int trackRoughnessId, int impactId, int bridgeId, double speed, String trackFileVersion, double axlesPerVeh) {
 
         double[] lW = new double[24];
@@ -394,12 +471,12 @@ public class RailwayCnossos extends org.noise_planet.noisemodelling.emission.rai
             lambdaToFreqLog[idLambda] = Math.log10(speed / Lambda[idLambda] * 1000 / 3.6);
 
             roughnessTotLambda[idLambda] = Math.pow(10, getLRoughness(typeVehicle, trackRoughnessId,  trackFileVersion, idLambda) / 10);
-            if (impactId != 0) {
-                roughnessTotLambda[idLambda] = roughnessTotLambda[idLambda] + Math.pow(10, getImpactNoise(impactId,  idLambda) / 10);
-            }
 
             contactFilter[idLambda] = getContactFilter(typeVehicle,  idLambda);
             roughnessLtot[idLambda] = 10 * Math.log10(roughnessTotLambda[idLambda]) + contactFilter[idLambda];
+            if (impactId != 0) {
+                roughnessLtot[idLambda] =  10 * Math.log10(Math.pow(10,roughnessLtot[idLambda]/ 10) + Math.pow(10, getImpactNoise(impactId,  idLambda) / 10));
+            }
             roughnessLtot[idLambda] = Math.pow(10, roughnessLtot[idLambda] / 10);
             m--;
         }

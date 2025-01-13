@@ -33,6 +33,9 @@ import org.noise_planet.noisemodelling.emission.road.cnossos.RoadCnossosParamete
 import org.noise_planet.noisemodelling.emission.road.cnossosvar.RoadVehicleCnossosvar
 import org.noise_planet.noisemodelling.emission.road.cnossosvar.RoadVehicleCnossosvarParameters
 import org.noise_planet.noisemodelling.pathfinder.*
+import org.noise_planet.noisemodelling.pathfinder.profilebuilder.ProfileBuilder
+import org.noise_planet.noisemodelling.pathfinder.path.Scene
+import org.noise_planet.noisemodelling.pathfinder.utils.profiler.RootProgressVisitor
 import org.noise_planet.noisemodelling.propagation.*
 import org.noise_planet.noisemodelling.jdbc.*
 
@@ -321,7 +324,7 @@ def exec(Connection connection, input) {
     // -------------------------
 
     // Attenuation matrix table
-    List<org.noise_planet.noisemodelling.propagation.ComputeRaysOutAttenuation.VerticeSL> allLevels = new ArrayList<>()
+    List<Attenuation.SourceReceiverAttenuation> allLevels = new ArrayList<>()
     // Set of already processed receivers
     Set<Long> receivers = new HashSet<>()
 
@@ -330,31 +333,31 @@ def exec(Connection connection, input) {
     // Initialize NoiseModelling propagation part
     // --------------------------------------------
 
-    PointNoiseMap pointNoiseMap = new PointNoiseMap(building_table_name, sources_table_name, receivers_table_name)
-    pointNoiseMap.setComputeHorizontalDiffraction(compute_horizontal_diffraction)
-    pointNoiseMap.setComputeVerticalDiffraction(compute_vertical_diffraction)
-    pointNoiseMap.setSoundReflectionOrder(reflexion_order)
+    NoiseMapByReceiverMaker noiseMapByReceiverMaker = new NoiseMapByReceiverMaker(building_table_name, sources_table_name, receivers_table_name)
+    noiseMapByReceiverMaker.setComputeHorizontalDiffraction(compute_horizontal_diffraction)
+    noiseMapByReceiverMaker.setComputeVerticalDiffraction(compute_vertical_diffraction)
+    noiseMapByReceiverMaker.setSoundReflectionOrder(reflexion_order)
     // Building height field name
-    pointNoiseMap.setHeightField("HEIGHT")
+    noiseMapByReceiverMaker.setHeightField("HEIGHT")
     // Import table with Snow, Forest, Grass, Pasture field polygons. Attribute G is associated with each polygon
     if (ground_table_name != "") {
-        pointNoiseMap.setSoilTableName(ground_table_name)
+        noiseMapByReceiverMaker.setSoilTableName(ground_table_name)
     }
     // Point cloud height above sea level POINT(X Y Z)
     if (dem_table_name != "") {
-        pointNoiseMap.setDemTable(dem_table_name)
+        noiseMapByReceiverMaker.setDemTable(dem_table_name)
     }
 
-    pointNoiseMap.setMaximumPropagationDistance(max_src_dist)
-    pointNoiseMap.setMaximumReflectionDistance(max_ref_dist)
-    pointNoiseMap.setWallAbsorption(wall_alpha)
-    pointNoiseMap.setThreadCount(n_thread)
+    noiseMapByReceiverMaker.setMaximumPropagationDistance(max_src_dist)
+    noiseMapByReceiverMaker.setMaximumReflectionDistance(max_ref_dist)
+    noiseMapByReceiverMaker.setWallAbsorption(wall_alpha)
+    noiseMapByReceiverMaker.setThreadCount(n_thread)
 
     // Do not propagate for low emission or far away sources
     // Maximum error in dB
-    pointNoiseMap.setMaximumError(0.0d)
+    noiseMapByReceiverMaker.setMaximumError(0.0d)
     // Init Map
-    pointNoiseMap.initialize(connection, new EmptyProgressVisitor())
+    noiseMapByReceiverMaker.initialize(connection, new EmptyProgressVisitor())
 
 
     // --------------------------------------------
@@ -362,7 +365,7 @@ def exec(Connection connection, input) {
     // --------------------------------------------
 
     WpsPropagationProcessDataProbaFactory wpsPropagationProcessDataProbaFactory =  new WpsPropagationProcessDataProbaFactory()
-    pointNoiseMap.setPropagationProcessDataFactory(wpsPropagationProcessDataProbaFactory)
+    noiseMapByReceiverMaker.setPropagationProcessDataFactory(wpsPropagationProcessDataProbaFactory)
 
     // --------------------------------------------
     // Run Calculations
@@ -370,20 +373,20 @@ def exec(Connection connection, input) {
 
     // Init ProgressLogger (loading bar)
     RootProgressVisitor progressLogger = new RootProgressVisitor(1, true, 1)
-    ProgressVisitor progressVisitor = progressLogger.subProcess(pointNoiseMap.getGridDim() * pointNoiseMap.getGridDim())
-    int fullGridSize = pointNoiseMap.getGridDim() * pointNoiseMap.getGridDim()
+    ProgressVisitor progressVisitor = progressLogger.subProcess(noiseMapByReceiverMaker.getGridDim() * noiseMapByReceiverMaker.getGridDim())
+    int fullGridSize = noiseMapByReceiverMaker.getGridDim() * noiseMapByReceiverMaker.getGridDim()
 
     System.println("Start calculation... ")
     // Iterate over computation areas
     int k=0
-    for (int i = 0; i < pointNoiseMap.getGridDim(); i++) {
-        for (int j = 0; j < pointNoiseMap.getGridDim(); j++) {
+    for (int i = 0; i < noiseMapByReceiverMaker.getGridDim(); i++) {
+        for (int j = 0; j < noiseMapByReceiverMaker.getGridDim(); j++) {
             System.println("Compute... " + 100*k++/fullGridSize + " % ")
 
-            IComputeRaysOut out = pointNoiseMap.evaluateCell(connection, i, j, progressVisitor, receivers)
+            IComputePathsOut out = noiseMapByReceiverMaker.evaluateCell(connection, i, j, progressVisitor, receivers)
 
-            if (out instanceof ComputeRaysOutAttenuation) {
-                allLevels.addAll(((ComputeRaysOutAttenuation) out).getVerticesSoundLevel())
+            if (out instanceof NoiseMap) {
+                allLevels.addAll(((NoiseMap) out).getVerticesSoundLevel())
             }
         }
     }
@@ -523,8 +526,8 @@ def exec(Connection connection, input) {
 /**
  * Read source database and compute the sound emission spectrum of roads sources
  * */
-class WpsPropagationProcessDataProba extends CnossosPropagationData {
-    static List<Integer> freq_lvl = Arrays.asList(CnossosPropagationData.asOctaveBands(CnossosPropagationData.DEFAULT_FREQUENCIES_THIRD_OCTAVE))
+class WpsPropagationProcessDataProba extends Scene {
+    static List<Integer> freq_lvl = Arrays.asList(asOctaveBands(DEFAULT_FREQUENCIES_THIRD_OCTAVE))
 
     // Lden values
     public List<double[]> wjSourcesD = new ArrayList<>()
@@ -810,22 +813,17 @@ class WpsPropagationProcessDataProba extends CnossosPropagationData {
         return [ld, le, ln, lden]
     }
 
-
-    @Override
-    double[] getMaximalSourcePower(int sourceId) {
-        return wjSourcesD.get(sourceId)
-    }
 }
 
-class WpsPropagationProcessDataProbaFactory implements PointNoiseMap.PropagationProcessDataFactory {
+class WpsPropagationProcessDataProbaFactory implements NoiseMapByReceiverMaker.PropagationProcessDataFactory {
 
     @Override
-    CnossosPropagationData create(ProfileBuilder builder) {
+    Scene create(ProfileBuilder builder) {
         return new WpsPropagationProcessDataProba(builder)
     }
 
     @Override
-    void initialize(Connection connection, PointNoiseMap pointNoiseMap) throws SQLException {
+    void initialize(Connection connection, NoiseMapByReceiverMaker noiseMapByReceiverMaker) throws SQLException {
 
     }
 }

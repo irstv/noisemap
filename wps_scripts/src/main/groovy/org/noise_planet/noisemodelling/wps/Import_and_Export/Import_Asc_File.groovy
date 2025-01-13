@@ -27,7 +27,7 @@ import org.h2gis.utilities.TableLocation
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.io.WKTReader
 import org.locationtech.jts.io.WKTWriter
-import org.noise_planet.noisemodelling.pathfinder.RootProgressVisitor
+import org.noise_planet.noisemodelling.pathfinder.utils.profiler.RootProgressVisitor;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

@@ -24,7 +24,7 @@ import org.geotools.jdbc.JDBCDataStore
 import org.h2gis.utilities.GeometryTableUtilities
 import org.h2gis.utilities.TableLocation
 import org.h2gis.utilities.wrapper.ConnectionWrapper
-import org.noise_planet.noisemodelling.jdbc.BezierContouring
+import org.noise_planet.noisemodelling.jdbc.utils.IsoSurface
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -55,11 +55,19 @@ inputs = [
                 min        : 0, max: 1,
                 type       : String.class
         ],
+        keepTriangles: [
+                name       : 'Keep triangles',
+                title      : 'Keep triangles',
+                description: 'Point inside areas with the same iso levels are kept so elevation variation into ' +
+                        'same iso level areas will be preserved but the output data size will be higher.',
+                min        : 0, max: 1,
+                type       : Boolean.class
+        ],
         smoothCoefficient: [
                 name       : 'Polygon smoothing coefficient',
                 title      : 'Polygon smoothing coefficient',
                 description: 'This coefficient (<a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve" target="_blank">Bezier curve</a> coefficient) will smooth the generated isosurfaces. </br> </br>'+
-                             'If equal to 0, it disables the smoothing step.</br> </br>' +
+                             'If equal to 0, it disables the smoothing step and will keep the altitude of receivers (3D geojson can be viewed on https://kepler.gl).</br> </br>' +
                              '&#128736; Default value: <b>0.5 </b>',
                 min        : 0, max: 1,
                 type       : Double.class
@@ -100,7 +108,7 @@ def exec(Connection connection, input) {
     logger.info("inputs {}", input) // log inputs of the run
 
 
-    List<Double> isoLevels = BezierContouring.NF31_133_ISO // default values
+    List<Double> isoLevels = IsoSurface.NF31_133_ISO // default values
 
     if (input.containsKey("isoClass")) {
         isoLevels = new ArrayList<>()
@@ -114,27 +122,27 @@ def exec(Connection connection, input) {
 
     int srid = GeometryTableUtilities.getSRID(connection, TableLocation.parse(levelTable))
 
-    BezierContouring bezierContouring = new BezierContouring(isoLevels, srid)
+    IsoSurface isoSurface = new IsoSurface(isoLevels, srid)
 
-    bezierContouring.setPointTable(levelTable)
+    isoSurface.setPointTable(levelTable)
 
     if (input.containsKey("smoothCoefficient")) {
         double coefficient = input['smoothCoefficient'] as Double
         if (coefficient < 0.01) {
-            bezierContouring.setSmooth(false)
+            isoSurface.setSmooth(false)
         } else {
-            bezierContouring.setSmooth(true)
-            bezierContouring.setSmoothCoefficient(coefficient)
+            isoSurface.setSmooth(true)
+            isoSurface.setSmoothCoefficient(coefficient)
         }
     }
     else {
-        bezierContouring.setSmooth(true)
-        bezierContouring.setSmoothCoefficient(0.5)
+        isoSurface.setSmooth(true)
+        isoSurface.setSmoothCoefficient(0.5)
     }
 
-    bezierContouring.createTable(connection)
+    isoSurface.createTable(connection)
 
-    resultString = "Table " + bezierContouring.getOutputTable() + " created"
+    resultString = "Table " + isoSurface.getOutputTable() + " created"
 
     logger.info('End : Compute Isosurfaces')
     logger.info(resultString)

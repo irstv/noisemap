@@ -210,7 +210,7 @@ Here's what did change in an incompatible way:
 Another technically compatible change that nonetheless might need attention:
 
 - The structure of the NPM package was refactored, so if you had installed it
-  locally, you'll have to update your paths. The usual `require('highlight.js')`
+  locally, you'll have to update your path. The usual `require('highlight.js')`
   works as before. This is contributed by [Dmitry Smolin][].
 
 New features:

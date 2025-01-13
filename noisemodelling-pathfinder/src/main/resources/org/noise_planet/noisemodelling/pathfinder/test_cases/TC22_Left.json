@@ -1,0 +1,94 @@
+{
+  "cutPoints" : [ {
+    "type" : "Source",
+    "coordinate" : {
+      "x" : 10.0,
+      "y" : 10.0,
+      "z" : 1.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.9,
+    "sourcePk" : -1,
+    "li" : 1.0,
+    "orientation" : {
+      "yaw" : 0.0,
+      "pitch" : 0.0,
+      "roll" : 0.0
+    }
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 50.0,
+      "y" : 16.156742995204382,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "Topography",
+    "coordinate" : {
+      "x" : 120.0,
+      "y" : 26.931043236812055,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 150.0,
+      "y" : 31.548600483215342,
+      "z" : 4.615384615384617
+    },
+    "zGround" : 4.615384615384617,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "VEdgeDiffraction",
+    "coordinate" : {
+      "x" : 178.9893933982822,
+      "y" : 36.0106066017178,
+      "z" : 13.480369267463196
+    },
+    "zGround" : 9.075291292043417,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "Topography",
+    "coordinate" : {
+      "x" : 185.0,
+      "y" : 36.0106066017178,
+      "z" : 10.0
+    },
+    "zGround" : 10.0,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "VEdgeDiffraction",
+    "coordinate" : {
+      "x" : 197.0106066017178,
+      "y" : 36.0106066017178,
+      "z" : 14.794157314518548
+    },
+    "zGround" : 10.0,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "VEdgeDiffraction",
+    "coordinate" : {
+      "x" : 197.0106066017178,
+      "y" : 29.989393398282203,
+      "z" : 14.756967790935844
+    },
+    "zGround" : 10.0,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "Receiver",
+    "coordinate" : {
+      "x" : 187.05,
+      "y" : 25.0,
+      "z" : 14.0
+    },
+    "zGround" : 10.0,
+    "groundCoefficient" : 0.2,
+    "receiverPk" : -1
+  } ],
+  "hasBuildingIntersection" : false,
+  "hasTopographyIntersection" : false
+}

@@ -25,7 +25,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.h2.util.OsgiDataSourceFactory;
 import org.h2gis.functions.factory.H2GISFunctions;
 import org.h2gis.utilities.wrapper.ConnectionWrapper;
-import org.noise_planet.noisemodelling.pathfinder.RootProgressVisitor;
+import org.noise_planet.noisemodelling.pathfinder.utils.profiler.RootProgressVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

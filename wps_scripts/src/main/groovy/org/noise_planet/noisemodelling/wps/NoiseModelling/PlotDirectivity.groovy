@@ -21,12 +21,16 @@ package org.noise_planet.noisemodelling.wps.NoiseModelling
 import geoserver.GeoServer
 import geoserver.catalog.Store
 import org.geotools.jdbc.JDBCDataStore
-import org.noise_planet.noisemodelling.emission.directivity.DirectivitySphere
 import org.noise_planet.noisemodelling.emission.directivity.DiscreteDirectivitySphere
+import org.noise_planet.noisemodelling.emission.directivity.OmnidirectionalDirection
+import org.noise_planet.noisemodelling.emission.directivity.PolarGraphDirectivity
 import org.noise_planet.noisemodelling.emission.railway.nmpb.RailWayNMPBParameters
-import org.noise_planet.noisemodelling.jdbc.DirectivityTableLoader
-import org.noise_planet.noisemodelling.jdbc.LDENPropagationProcessData
-import org.noise_planet.noisemodelling.jdbc.PolarGraphDirectivity
+import org.noise_planet.noisemodelling.emission.railway.nmpb.TrainAttenuation
+import org.noise_planet.noisemodelling.jdbc.NoiseMapLoader
+
+//import org.noise_planet.noisemodelling.emission.directivity.DirectivitySphere
+//import org.noise_planet.noisemodelling.emission.directivity.DiscreteDirectivitySphere
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -40,26 +44,26 @@ inputs = [
                 name       : 'Source directivity table name',
                 title      : 'Source directivity table name',
                 description: 'Name of the emission directivity table.</br></br>' +
-                             '&#128736;  If not specified the default is train directivity of CNOSSOS-EU </br> </br>' +
-                             'The table must contain the following columns: <ul> ' +
-                             '<li> <b> DIR_ID </b> : identifier of the directivity sphere (INTEGER)</li> ' +
-                             '<li> <b> THETA </b> : [-90;90] Vertical angle in degree. 0&#176; front 90&#176; top -90&#176; bottom (FLOAT)</li> ' +
-                             '<li> <b> PHI </b> : [0;360] Horizontal angle in degree. 0&#176; front 90&#176; right (FLOAT)</li> ' +
-                             '<li> <b> LW63, LW125, LW250, LW500, LW1000, LW2000, LW4000, LW8000 </b> : attenuation levels in dB for each octave or third octave (FLOAT). </li></ul> ' ,
+                        '&#128736;  If not specified the default is train directivity of CNOSSOS-EU </br> </br>' +
+                        'The table must contain the following columns: <ul> ' +
+                        '<li> <b> DIR_ID </b> : identifier of the directivity sphere (INTEGER)</li> ' +
+                        '<li> <b> THETA </b> : [-90;90] Vertical angle in degree. 0&#176; front 90&#176; top -90&#176; bottom (FLOAT)</li> ' +
+                        '<li> <b> PHI </b> : [0;360] Horizontal angle in degree. 0&#176; front 90&#176; right (FLOAT)</li> ' +
+                        '<li> <b> LW63, LW125, LW250, LW500, LW1000, LW2000, LW4000, LW8000 </b> : attenuation levels in dB for each octave or third octave (FLOAT). </li></ul> ' ,
                 min        : 0, max: 1, type: String.class
         ],
         confDirId            : [
                 name       : 'Directivity Index',
                 title      : 'Directivity Index',
                 description: 'Identifier of the directivity sphere from "tableSourceDirectivity" parameter or train directivity if "tableSourceDirectivity" parameter is not filled (INTEGER)</br> </br>' +
-                             'In case of train, you can use these values: <ul>'+
-                             '<li>0 = OMNIDIRECTIONAL</li>' +
-                             '<li>1 = ROLLING</li>' +
-                             '<li>2 = TRACTIONA</li>' + 
-                             '<li>3 = TRACTIONB</li>' +
-                             '<li>4 = AERODYNAMICA</li>' +
-                             '<li>5 = AERODYNAMICB</li>' +
-                             '<li>6 = BRIDGE</li></ul>',
+                        'In case of train, you can use these values: <ul>'+
+                        '<li>0 = OMNIDIRECTIONAL</li>' +
+                        '<li>1 = ROLLING</li>' +
+                        '<li>2 = TRACTIONA</li>' +
+                        '<li>3 = TRACTIONB</li>' +
+                        '<li>4 = AERODYNAMICA</li>' +
+                        '<li>5 = AERODYNAMICB</li>' +
+                        '<li>6 = BRIDGE</li></ul>',
                 type       : Integer.class
         ],
         confFrequency            : [
@@ -72,7 +76,7 @@ inputs = [
                 name       : 'Minimum scale attenuation (dB)',
                 title      : 'Minimum scale attenuation (dB)',
                 description: 'Minimum scale attenuation (in dB) </br> </br>'+
-                             '&#128736; Default value: <b>-35 dB</b>',
+                        '&#128736; Default value: <b>-35 dB</b>',
                 min        : 0, max: 1,
                 type       : Double.class
         ],
@@ -80,7 +84,7 @@ inputs = [
                 name       : 'Maximum scale attenuation (dB)',
                 title      : 'Maximum scale attenuation (dB)',
                 description: 'Maximum scale attenuation (in dB) </br> </br>'+
-                             '&#128736; Default value: <b>0 dB</b>',
+                        '&#128736; Default value: <b>0 dB</b>',
                 min        : 0, max: 1,
                 type       : Double.class
         ]
@@ -116,12 +120,12 @@ def exec(Connection connection, input) {
         tableSourceDirectivity = input['tableSourceDirectivity']
         // do it case-insensitive
         tableSourceDirectivity = tableSourceDirectivity.toUpperCase()
-        directivityData = DirectivityTableLoader.loadTable(connection, tableSourceDirectivity, 1)
+        directivityData = NoiseMapLoader.fetchDirectivity(connection, tableSourceDirectivity, 1)
     } else {
         directivityData = new HashMap<>();
-        directivityData.put(0, new LDENPropagationProcessData.OmnidirectionalDirection());
+        directivityData.put(0, new OmnidirectionalDirection());
         for(RailWayNMPBParameters.TrainNoiseSource noiseSource : RailWayLW.TrainNoiseSource.values()) {
-            directivityData.put(noiseSource.ordinal() + 1, new RailWayNMPBParameters.TrainAttenuation(noiseSource));
+            directivityData.put(noiseSource.ordinal() + 1, new TrainAttenuation(noiseSource));
         }
     }
 

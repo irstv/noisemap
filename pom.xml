@@ -5,11 +5,11 @@
     <name>noisemodelling-parent</name>
     <artifactId>noisemodelling-parent</artifactId>
     <groupId>org.orbisgis</groupId>
-    <version>4.0.5</version>
+    <version>5.0.0-SNAPSHOT</version>
     <description>NoiseModelling is an extension of H2GIS</description>
     <organization>
-        <name>Lab-STICC - UMR CNRS 6285</name>
-        <url>http://www.labsticc.fr/</url>
+        <name>UMRAE, CEREMA, Univ Gustave Eiffel</name>
+        <url>https://umrae.fr</url>
     </organization>
     <url>http://noise-planet.org/noisemodelling.html</url>
     <licenses>
@@ -18,15 +18,6 @@
             <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
         </license>
     </licenses>
-    <properties>
-        <jts-core-groupId>org.locationtech.jts</jts-core-groupId>
-        <jts-core-version>1.19.0</jts-core-version>
-        <jts-io-version>1.19.0</jts-io-version>
-        <h2-version>2.1.214</h2-version>
-        <h2gis-version>2.2.0</h2gis-version>
-        <cts-version>1.7.0</cts-version>
-        <slf4j-version>1.7.36</slf4j-version>
-    </properties>
     <modules>
         <module>noisemodelling-emission</module>
         <module>noisemodelling-pathfinder</module>
@@ -38,8 +29,8 @@
         <connection>scm:git:https://github.com/Ifsttar/NoiseModelling.git</connection>
         <developerConnection>scm:git:https://github.com/Ifsttar/NoiseModelling.git</developerConnection>
         <url>git@github.com:Ifsttar/NoiseModelling.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
     <build>
         <plugins>
             <plugin>
@@ -99,37 +90,26 @@
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
     <developers>
+        <!-- Permanent developer point of contact -->
         <developer>
             <name>Nicolas Fortin</name>
-            <organization>Ifsttar UMRAE</organization>
+            <organization>Gustave Eiffel University UMRAE</organization>
             <url>https://github.com/nicolas-f</url>
         </developer>
         <developer>
             <name>Pierre Aumond</name>
-            <organization>Ifsttar UMRAE</organization>
+            <organization>Gustave Eiffel University UMRAE</organization>
             <url>https://github.com/pierromond</url>
-        </developer>
-        <developer>
-            <name>Qi Su</name>
-            <url>https://github.com/sqi0081</url>
         </developer>
     </developers>
     <repositories>
         <repository>
-            <id>repo2.maven.org</id>
-            <name>Maven2 repository 2</name>
-            <url>https://repo2.maven.org/maven2</url>
+            <id>repo1.maven.org</id>
+            <name>Maven2 repository 1</name>
+            <url>https://repo1.maven.org/maven2</url>
         </repository>
         <repository>
             <id>ossrh-snapshot</id>
@@ -147,4 +127,108 @@
         </repository>
     </repositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>2.3.232</version>
+            </dependency>
+            <dependency>
+                <groupId>org.orbisgis</groupId>
+                <artifactId>cts</artifactId>
+                <version>1.7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.orbisgis</groupId>
+                <artifactId>h2gis</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.orbisgis</groupId>
+                <artifactId>h2gis-api</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.orbisgis</groupId>
+                <artifactId>postgis-jts-osgi</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.orbisgis</groupId>
+                <artifactId>h2gis-utilities</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.18.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.18.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.18.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.locationtech.jts</groupId>
+                <artifactId>jts-core</artifactId>
+                <version>1.20.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>2.0.16</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.7.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>3.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.tinfour</groupId>
+                <artifactId>TinfourCore</artifactId>
+                <version>2.1.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.5.0-M2</version>
+            </dependency>
+
+            <!-- Test dependencies -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.11.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>5.11.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>2.0.16</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

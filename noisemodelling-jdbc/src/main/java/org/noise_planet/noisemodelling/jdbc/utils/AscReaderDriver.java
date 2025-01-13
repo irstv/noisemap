@@ -1,22 +1,3 @@
-/**
- * H2GIS is a library that brings spatial support to the H2 Database Engine
- * <http://www.h2database.com>. H2GIS is developed by CNRS
- * <http://www.cnrs.fr/>.
- *
- * This code is part of the H2GIS project. H2GIS is free software; you can
- * redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; version 3.0 of
- * the License.
- *
- * H2GIS is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details <http://www.gnu.org/licenses/>.
- *
- *
- * For more information, please consult: <http://www.h2gis.org/>
- * or contact directly: info_at_h2gis.org
- */
 package org.noise_planet.noisemodelling.jdbc.utils;
 
 import org.h2gis.api.EmptyProgressVisitor;
@@ -210,7 +191,7 @@ public class AscReaderDriver {
      * @throws IOException
      */
     public String[] read(Connection connection, File fileName, ProgressVisitor progress, String tableReference,
-            int srid) throws SQLException, IOException {
+                         int srid) throws SQLException, IOException {
         if (fileName != null && fileName.getName().toLowerCase().endsWith(".asc")) {
             if (!fileName.exists()) {
                 throw new SQLException("The file " + tableReference + " doesn't exist ");
@@ -261,7 +242,7 @@ public class AscReaderDriver {
      */
 
     private String readAsc(Connection connection, InputStream inputStream, ProgressVisitor progress, String outputTable,
-            int srid) throws UnsupportedEncodingException, SQLException {
+                           int srid) throws UnsupportedEncodingException, SQLException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(inputStream, BUFFER_SIZE), encoding));
         try {
             Scanner scanner = new Scanner(reader);
@@ -425,3 +406,4 @@ public class AscReaderDriver {
         this.importNodata = importNodata;
     }
 }
+

@@ -25,7 +25,7 @@ import org.h2gis.functions.io.utility.PRJUtil
 import org.h2gis.utilities.TableLocation
 import org.h2gis.utilities.dbtypes.DBUtils
 import org.noise_planet.noisemodelling.jdbc.utils.AscReaderDriver
-import org.noise_planet.noisemodelling.pathfinder.RootProgressVisitor
+import org.noise_planet.noisemodelling.pathfinder.utils.profiler.RootProgressVisitor;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

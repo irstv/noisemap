@@ -1,0 +1,80 @@
+{
+  "cutPoints" : [ {
+    "type" : "Source",
+    "coordinate" : {
+      "x" : 105.0,
+      "y" : 35.0,
+      "z" : -0.45
+    },
+    "zGround" : -0.5,
+    "groundCoefficient" : 0.0,
+    "sourcePk" : -1,
+    "li" : 1.0,
+    "orientation" : {
+      "yaw" : 0.0,
+      "pitch" : 0.0,
+      "roll" : 0.0
+    }
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 110.0,
+      "y" : 37.362637362637365,
+      "z" : -0.5
+    },
+    "zGround" : -0.5,
+    "groundCoefficient" : 1.0
+  }, {
+    "type" : "Topography",
+    "coordinate" : {
+      "x" : 110.0,
+      "y" : 37.362637362637365,
+      "z" : -0.5
+    },
+    "zGround" : -0.5,
+    "groundCoefficient" : 1.0
+  }, {
+    "type" : "Topography",
+    "coordinate" : {
+      "x" : 111.0,
+      "y" : 37.83516483516484,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 1.0
+  }, {
+    "type" : "Reflection",
+    "coordinate" : {
+      "x" : 152.66576252461314,
+      "y" : 57.523382291850176,
+      "z" : 1.880952380952381
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 1.0,
+    "wall" : {
+      "p0" : {
+        "x" : 114.0,
+        "y" : 52.0,
+        "z" : 2.5
+      },
+      "p1" : {
+        "x" : 170.0,
+        "y" : 60.0,
+        "z" : 4.5
+      }
+    },
+    "wallAlpha" : [ 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.5 ]
+  }, {
+    "type" : "Receiver",
+    "coordinate" : {
+      "x" : 200.0,
+      "y" : 50.0,
+      "z" : 4.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 1.0,
+    "receiverPk" : -1
+  } ],
+  "hasBuildingIntersection" : false,
+  "hasTopographyIntersection" : false
+}

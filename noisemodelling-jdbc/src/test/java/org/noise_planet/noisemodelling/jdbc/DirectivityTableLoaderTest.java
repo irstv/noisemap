@@ -1,13 +1,22 @@
+/**
+ * NoiseModelling is a library capable of producing noise maps. It can be freely used either for research and education, as well as by experts in a professional use.
+ * <p>
+ * NoiseModelling is distributed under GPL 3 license. You can read a copy of this License in the file LICENCE provided with this software.
+ * <p>
+ * Official webpage : http://noise-planet.org/noisemodelling.html
+ * Contact: contact@noise-planet.org
+ */
 package org.noise_planet.noisemodelling.jdbc;
 
 import org.h2gis.functions.factory.H2GISDBFactory;
 import org.h2gis.utilities.JDBCUtilities;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.noise_planet.noisemodelling.emission.LineSource;
+import org.noise_planet.noisemodelling.emission.directivity.DirectivityRecord;
+import org.noise_planet.noisemodelling.emission.directivity.cnossos.RailwayCnossosDirectivitySphere;
 import org.noise_planet.noisemodelling.emission.directivity.DiscreteDirectivitySphere;
-import org.noise_planet.noisemodelling.emission.railway.cnossos.RailWayCnossosParameters;
 
 
 import java.sql.Connection;
@@ -16,18 +25,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class DirectivityTableLoaderTest {
 
     private Connection connection;
 
-    @Before
+    @BeforeEach
     public void tearUp() throws Exception {
         connection = JDBCUtilities.wrapConnection(H2GISDBFactory.createSpatialDataBase(DirectivityTableLoaderTest.class.getSimpleName(), true, ""));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if(connection != null) {
             connection.close();
@@ -45,7 +55,7 @@ public class DirectivityTableLoaderTest {
             st.execute("CREATE TABLE DIRTEST(DIR_ID INTEGER, THETA FLOAT, PHI FLOAT, LW63 FLOAT, LW125 FLOAT, LW250 FLOAT, LW500 FLOAT, LW1000 FLOAT, LW2000 FLOAT, LW4000 FLOAT, LW8000 FLOAT)");
         }
 
-        RailWayCnossosParameters.RailwayDirectivitySphere att = new RailWayCnossosParameters.RailwayDirectivitySphere(new LineSource("TRACTIONB"));
+        RailwayCnossosDirectivitySphere att = new RailwayCnossosDirectivitySphere(new LineSource("TRACTIONB"));
 
         try(PreparedStatement st = connection.prepareStatement("INSERT INTO DIRTEST VALUES(?,?,?,?,?,?,?,?,?,?,?)")) {
             for(int yaw = 0; yaw < 360; yaw += 5) {
@@ -69,14 +79,14 @@ public class DirectivityTableLoaderTest {
         }
 
         // Data is inserted now fetch it from the database
-        Map<Integer, DiscreteDirectivitySphere> directivities = DirectivityTableLoader.loadTable(connection, "DIRTEST", 1);
+        Map<Integer, DiscreteDirectivitySphere> directivities = NoiseMapLoader.fetchDirectivity(connection, "DIRTEST", 1);
 
         assertEquals(1, directivities.size());
 
         assertTrue(directivities.containsKey(1));
 
         DiscreteDirectivitySphere d = directivities.get(1);
-        for(DiscreteDirectivitySphere.DirectivityRecord directivityRecord : d.getRecordsTheta()) {
+        for(DirectivityRecord directivityRecord : d.getRecordsTheta()) {
             double[] attSpectrum = att.getAttenuationArray(freqTest, directivityRecord.getPhi(), directivityRecord.getTheta());
             assertArrayEquals(attSpectrum, directivityRecord.getAttenuation(), 1e-2);
         }

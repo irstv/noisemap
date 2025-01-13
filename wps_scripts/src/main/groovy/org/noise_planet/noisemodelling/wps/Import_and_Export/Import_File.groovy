@@ -24,6 +24,7 @@ import org.geotools.jdbc.JDBCDataStore
 import org.h2gis.api.EmptyProgressVisitor
 import org.h2gis.functions.io.csv.CSVDriverFunction
 import org.h2gis.functions.io.dbf.DBFDriverFunction
+import org.h2gis.functions.io.fgb.FGBDriverFunction
 import org.h2gis.functions.io.geojson.GeoJsonDriverFunction
 import org.h2gis.functions.io.gpx.GPXDriverFunction
 import org.h2gis.functions.io.osm.OSMDriverFunction
@@ -169,7 +170,7 @@ def exec(Connection connection, input) {
     stmt.execute(dropOutputTable)
 
     // Get the extension of the file
-    String ext = pathFile.substring(pathFile.lastIndexOf('.') + 1, pathFile.length())
+    String ext = pathFile.substring(pathFile.lastIndexOf('.') + 1, pathFile.length()).toLowerCase()
     switch (ext) {
         case "csv":
             CSVDriverFunction csvDriver = new CSVDriverFunction()
@@ -212,7 +213,10 @@ def exec(Connection connection, input) {
                 logger.warn("The PK2 column automatically created by the SHP driver has been deleted.")
             }
             break
-
+        case "fgb":
+            FGBDriverFunction fgbDriver = new FGBDriverFunction()
+            fgbDriver.importFile(connection, tableName, new File(pathFile), new EmptyProgressVisitor())
+            break
         case "tsv":
             TSVDriverFunction tsvDriver = new TSVDriverFunction()
             tsvDriver.importFile(connection, tableName, new File(pathFile), new EmptyProgressVisitor())

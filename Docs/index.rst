@@ -18,6 +18,7 @@ A general overview of the model (v3.4.5 - September 2020) can be found in `this 
 
 * for **more information** on NoiseModelling, visit the `offical NoiseModelling website`_
 * to **contribute to NoiseModelling** source code, follow the ":doc:`Get_Started_Dev`" page
+* for **more information** for the final results with the reference results in ISO/TR 17534-4: 2020 follow the ":doc:`Cnossos_Report`" page
 * to **contact the support / development team**, 
     - open an `issue`_ or a write a `message`_ *(we prefer these two options)*
     - send us an email at contact@noise-planet.org  
@@ -53,6 +54,7 @@ On the NoiseModelling latest `release page`_, three packages of NoiseModelling a
 * ``NoiseModelling_4.0.0.zip`` : cross-platform version, with GUI (Graphic User Interface)
 * ``NoiseModelling_4.0.0_install.exe`` : windows installer, with GUI
 * ``NoiseModelling_4.0.0_without_gui.zip`` : version without GUI. Usefull to run NoiseModelling using command lines (read ":doc:`Get_Started_Script`" page for more info)
+
 
 .. _release page : https://github.com/Universite-Gustave-Eiffel/NoiseModelling/releases/latest
 
@@ -181,6 +183,7 @@ Fundings
     :caption: For Developers
 
     Get_Started_Dev
+    Cnossos_Report
 
 .. toctree::
     :maxdepth: 2
@@ -190,6 +193,8 @@ Fundings
     Support
     License
     Glossary
+
+
 
 Indices and tables
 ==================

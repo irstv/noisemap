@@ -168,6 +168,15 @@ public class Utils {
     public static Double sumDb5(Double dB1, Double dB2, Double dB3, Double dB4, Double dB5) {
         return wToDb(dbToW(dB1) + dbToW(dB2) + dbToW(dB3) + dbToW(dB4) + dbToW(dB5));
     }
-
+    /**
+     * trainpWperFreq
+     */
+    public static double[] trainLWmperFreq(double[] LWi, double nBUnit, double deltaT) throws IOException {
+        double[] LW = new double[LWi.length];
+        for (int idFreq = 0; idFreq < 24; idFreq++) {
+            LW[idFreq] = 10*Math.log10(Math.pow(10, (LWi[idFreq] + 10 * Math.log10(nBUnit) + deltaT) / 10));
+        }
+        return LW;
+    }
 
 }

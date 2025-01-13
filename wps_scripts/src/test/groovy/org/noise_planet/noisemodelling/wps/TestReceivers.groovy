@@ -227,7 +227,7 @@ class TestReceivers extends JdbcTestCase {
 
     }
 
-    public void testDelaunayGrid() {
+    void testDelaunayGrid() {
         def sql = new Sql(connection)
 
         SHPRead.importTable(connection, TestReceivers.getResource("buildings.shp").getPath())

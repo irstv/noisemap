@@ -1,0 +1,113 @@
+{
+  "cutPoints" : [ {
+    "type" : "Source",
+    "coordinate" : {
+      "x" : 10.0,
+      "y" : 10.0,
+      "z" : 1.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.9,
+    "sourcePk" : -1,
+    "li" : 1.0,
+    "orientation" : {
+      "yaw" : 0.0,
+      "pitch" : 0.0,
+      "roll" : 0.0
+    }
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 50.0,
+      "y" : 13.388873199661113,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "Topography",
+    "coordinate" : {
+      "x" : 120.0,
+      "y" : 19.31940129906806,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 150.0,
+      "y" : 21.861056198813895,
+      "z" : 4.615384615384615
+    },
+    "zGround" : 4.615384615384615,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "Wall",
+    "coordinate" : {
+      "x" : 179.0,
+      "y" : 24.3179892685682,
+      "z" : 20.0
+    },
+    "zGround" : 9.076923076923077,
+    "groundCoefficient" : 0.2,
+    "wall" : {
+      "p0" : {
+        "x" : 179.0,
+        "y" : 15.0,
+        "z" : 20.0
+      },
+      "p1" : {
+        "x" : 179.0,
+        "y" : 36.0,
+        "z" : 20.0
+      }
+    },
+    "wallAlpha" : [ ],
+    "intersectionType" : "BUILDING_ENTER"
+  }, {
+    "type" : "Topography",
+    "coordinate" : {
+      "x" : 185.0,
+      "y" : 24.826320248517366,
+      "z" : 10.0
+    },
+    "zGround" : 10.0,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "Wall",
+    "coordinate" : {
+      "x" : 187.0,
+      "y" : 24.99576390850042,
+      "z" : 20.0
+    },
+    "zGround" : 10.0,
+    "groundCoefficient" : 0.2,
+    "wall" : {
+      "p0" : {
+        "x" : 187.0,
+        "y" : 30.0,
+        "z" : 20.0
+      },
+      "p1" : {
+        "x" : 187.0,
+        "y" : 21.0,
+        "z" : 20.0
+      }
+    },
+    "wallAlpha" : [ ],
+    "intersectionType" : "BUILDING_EXIT"
+  }, {
+    "type" : "Receiver",
+    "coordinate" : {
+      "x" : 187.05,
+      "y" : 25.0,
+      "z" : 14.0
+    },
+    "zGround" : 10.0,
+    "groundCoefficient" : 0.2,
+    "receiverPk" : -1
+  } ],
+  "hasBuildingIntersection" : true,
+  "hasTopographyIntersection" : false
+}

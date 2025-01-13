@@ -1,3 +1,11 @@
+/**
+ * NoiseModelling is a library capable of producing noise maps. It can be freely used either for research and education, as well as by experts in a professional use.
+ * <p>
+ * NoiseModelling is distributed under GPL 3 license. You can read a copy of this License in the file LICENCE provided with this software.
+ * <p>
+ * Official webpage : http://noise-planet.org/noisemodelling.html
+ * Contact: contact@noise-planet.org
+ */
 package org.noise_planet.noisemodelling.jdbc.utils;
 
 import org.locationtech.jts.geom.Geometry;
@@ -140,6 +148,10 @@ public class StringPreparedStatements implements PreparedStatement {
         return false;
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @Override
     public void addBatch() throws SQLException {
         int oldIndex = 0;

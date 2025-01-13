@@ -9,7 +9,7 @@ Get Started
 
     * ``noisemodelling-emission`` : to determine the noise emission
     * ``noisemodelling-jdbc`` : to connect NoiseModelling to a database
-    * ``noisemodelling-pathfinder`` : to determine the noise path 
+    * ``noisemodelling-pathfinder`` : to determine the noise path
     * ``noisemodelling-propagation`` : to calculate the noise propagation
 
 #. Enjoy & feel free to contact us!

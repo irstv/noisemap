@@ -6,13 +6,13 @@ import org.h2gis.functions.io.csv.CSVDriverFunction;
 import org.h2gis.functions.io.geojson.GeoJsonRead;
 import org.h2gis.postgis_jts_osgi.DataSourceFactoryImpl;
 import org.h2gis.utilities.SFSUtilities;
-import org.junit.Test;
-import org.noise_planet.noisemodelling.emission.jdbc.LDENConfig;
-import org.noise_planet.noisemodelling.emission.jdbc.LDENPointNoiseMapFactory;
+import org.junit.jupiter.api.Test;
+import org.noise_planet.noisemodelling.jdbc.NoiseMapParameters
+import org.noise_planet.noisemodelling.jdbc.NoiseMapMaker;
 import org.noise_planet.noisemodelling.propagation.ComputeRaysOut;
 import org.noise_planet.noisemodelling.propagation.IComputeRaysOut;
 import org.noise_planet.noisemodelling.propagation.RootProgressVisitor;
-import org.noise_planet.noisemodelling.propagation.jdbc.PointNoiseMap;
+import org.noise_planet.noisemodelling.jdbc.NoiseMapByReceiverMaker;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class Main {
@@ -80,57 +80,57 @@ public class Main {
             GeoJsonRead.readGeoJson(connection, Main.class.getResource("dem_lorient.geojson").getFile(), "dem");
 
             // Init NoiseModelling
-            PointNoiseMap pointNoiseMap = new PointNoiseMap("buildings", "lw_roads", "receivers");
+            NoiseMapByReceiverMaker noiseMapByReceiverMaker = new NoiseMapByReceiverMaker("buildings", "lw_roads", "receivers");
 
-            pointNoiseMap.setMaximumPropagationDistance(160.0d);
-            pointNoiseMap.setSoundReflectionOrder(0);
-            pointNoiseMap.setComputeHorizontalDiffraction(true);
-            pointNoiseMap.setComputeVerticalDiffraction(true);
+            noiseMapByReceiverMaker.setMaximumPropagationDistance(160.0d);
+            noiseMapByReceiverMaker.setSoundReflectionOrder(0);
+            noiseMapByReceiverMaker.setComputeHorizontalDiffraction(true);
+            noiseMapByReceiverMaker.setComputeVerticalDiffraction(true);
             // Building height field name
-            pointNoiseMap.setHeightField("HEIGHT");
+            noiseMapByReceiverMaker.setHeightField("HEIGHT");
             // Point cloud height above sea level POINT(X Y Z)
-            pointNoiseMap.setDemTable("DEM");
+            noiseMapByReceiverMaker.setDemTable("DEM");
             // Do not propagate for low emission or far away sources.
             // error in dB
-            pointNoiseMap.setMaximumError(0.1d);
+            noiseMapByReceiverMaker.setMaximumError(0.1d);
 
             // Init custom input in order to compute more than just attenuation
             // LW_ROADS contain Day Evening Night emission spectrum
-            LDENConfig ldenConfig = new LDENConfig(LDENConfig.INPUT_MODE.INPUT_MODE_LW_DEN);
+            NoiseMapParameters noiseMapParameters = new NoiseMapParameters(NoiseMapParameters.INPUT_MODE.INPUT_MODE_LW_DEN);
 
-            ldenConfig.setComputeLDay(true);
-            ldenConfig.setComputeLEvening(true);
-            ldenConfig.setComputeLNight(true);
-            ldenConfig.setComputeLDEN(true);
+            noiseMapParameters.setComputeLDay(true);
+            noiseMapParameters.setComputeLEvening(true);
+            noiseMapParameters.setComputeLNight(true);
+            noiseMapParameters.setComputeLDEN(true);
 
-            LDENPointNoiseMapFactory tableWriter = new LDENPointNoiseMapFactory(connection, ldenConfig);
+            NoiseMapMaker tableWriter = new NoiseMapMaker(connection, noiseMapParameters);
 
             tableWriter.setKeepRays(true);
 
-            pointNoiseMap.setPropagationProcessDataFactory(tableWriter);
-            pointNoiseMap.setComputeRaysOutFactory(tableWriter);
+            noiseMapByReceiverMaker.setPropagationProcessDataFactory(tableWriter);
+            noiseMapByReceiverMaker.setComputeRaysOutFactory(tableWriter);
 
             RootProgressVisitor progressLogger = new RootProgressVisitor(1, true, 1);
 
-            pointNoiseMap.initialize(connection, new EmptyProgressVisitor());
+            noiseMapByReceiverMaker.initialize(connection, new EmptyProgressVisitor());
 
             // force the creation of a 2x2 cells
-            pointNoiseMap.setGridDim(2);
+            noiseMapByReceiverMaker.setGridDim(2);
 
 
             // Set of already processed receivers
             Set<Long> receivers = new HashSet<>();
-            ProgressVisitor progressVisitor = progressLogger.subProcess(pointNoiseMap.getGridDim()*pointNoiseMap.getGridDim());
+            ProgressVisitor progressVisitor = progressLogger.subProcess(noiseMapByReceiverMaker.getGridDim()*noiseMapByReceiverMaker.getGridDim());
             LOGGER.info("start");
             long start = System.currentTimeMillis();
 
             // Iterate over computation areas
             try {
                 tableWriter.start();
-                for (int i = 0; i < pointNoiseMap.getGridDim(); i++) {
-                    for (int j = 0; j < pointNoiseMap.getGridDim(); j++) {
+                for (int i = 0; i < noiseMapByReceiverMaker.getGridDim(); i++) {
+                    for (int j = 0; j < noiseMapByReceiverMaker.getGridDim(); j++) {
                         // Run ray propagation
-                        IComputeRaysOut out = pointNoiseMap.evaluateCell(connection, i, j, progressVisitor, receivers);
+                        IComputeRaysOut out = noiseMapByReceiverMaker.evaluateCell(connection, i, j, progressVisitor, receivers);
                     }
                 }
             } finally {
@@ -141,10 +141,10 @@ public class Main {
                     computationTime,computationTime / (double)receivers.size()));
             // Export result tables as csv files
             CSVDriverFunction csv = new CSVDriverFunction();
-            csv.exportTable(connection, ldenConfig.getlDayTable(), new File(ldenConfig.getlDayTable()+".csv"), new EmptyProgressVisitor());
-            csv.exportTable(connection, ldenConfig.getlEveningTable(), new File(ldenConfig.getlEveningTable()+".csv"), new EmptyProgressVisitor());
-            csv.exportTable(connection, ldenConfig.getlNightTable(), new File(ldenConfig.getlNightTable()+".csv"), new EmptyProgressVisitor());
-            csv.exportTable(connection, ldenConfig.getlDenTable(), new File(ldenConfig.getlDenTable()+".csv"), new EmptyProgressVisitor());
+            csv.exportTable(connection, noiseMapParameters.getlDayTable(), new File(noiseMapParameters.getlDayTable()+".csv"), new EmptyProgressVisitor());
+            csv.exportTable(connection, noiseMapParameters.getlEveningTable(), new File(noiseMapParameters.getlEveningTable()+".csv"), new EmptyProgressVisitor());
+            csv.exportTable(connection, noiseMapParameters.getlNightTable(), new File(noiseMapParameters.getlNightTable()+".csv"), new EmptyProgressVisitor());
+            csv.exportTable(connection, noiseMapParameters.getlDenTable(), new File(noiseMapParameters.getlDenTable()+".csv"), new EmptyProgressVisitor());
         } catch (PSQLException ex) {
             if (ex.getCause() instanceof ConnectException) {
                 // Connection issue ignore

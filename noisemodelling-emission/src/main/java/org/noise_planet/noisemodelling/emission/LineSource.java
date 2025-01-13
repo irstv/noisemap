@@ -61,14 +61,6 @@ public class LineSource {
     private void setLW(double[] lW) {
     }
 
-
-    public LineSource(double[] lW, double sourceHeight, String typeSource, String directivity) {
-        this.lW = lW;
-        this.sourceHeight = sourceHeight;
-        this.typeSource = typeSource;
-        this.directivity = directivity;
-    }
-
     public LineSource(double[] lW, double sourceHeight, String typeSource) {
         this.lW = lW;
         this.sourceHeight = sourceHeight;

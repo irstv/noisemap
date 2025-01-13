@@ -13,6 +13,7 @@ import org.noise_planet.noisemodelling.emission.utils.Utils;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.DoublePredicate;
 
 /**
  * Describe Attenuation directivity over a sphere
@@ -99,49 +100,36 @@ public class DiscreteDirectivitySphere implements DirectivitySphere {
      */
     @Override
     public double getAttenuation(double frequency, double phi, double theta) {
-        DirectivityRecord query = new DirectivityRecord(theta, phi, null);
-
-        // look for frequency index
-        Integer idFreq = frequencyMapping.get(Double.doubleToLongBits(frequency));
-        if (idFreq == null) {
-            // get closest index
-            idFreq = Arrays.binarySearch(frequencies, frequency);
-            if (idFreq < 0) {
-                int last = Math.min(-idFreq - 1, frequencies.length - 1);
-                int first = Math.max(last - 1, 0);
-                idFreq = Math.abs(frequencies[first] - frequency) < Math.abs(frequencies[last] - frequency) ?
-                        first : last;
-            }
-        }
-        return getRecord(query.theta, query.phi, interpolationMethod).getAttenuation()[idFreq];
+        return getAttenuationArray(new double[]{frequency}, phi, theta)[0];
     }
 
     /**
      * Returns the attenuation in dB of the directivity pattern at a given angle (phi, theta)
-     * @param frequencies Frequency array in Hertz (same order will be returned)
+     * @param requestFrequencies Frequency array in Hertz (same order will be returned)
      * @param phi (0 2π) with 0 is front
      * @param theta (-π/2 π/2) with 0 is horizontal; π is top
      * @return Attenuation array level in dB
      */
     @Override
-    public double[] getAttenuationArray(double[] frequencies, double phi, double theta) {
+    public double[] getAttenuationArray(double[] requestFrequencies, double phi, double theta) {
         DirectivityRecord query = new DirectivityRecord(theta, phi, null);
 
         DirectivityRecord record = getRecord(query.theta, query.phi, interpolationMethod);
 
-        double[] returnAttenuation = new double[frequencies.length];
+        double[] returnAttenuation = new double[requestFrequencies.length];
 
-        for (int frequencyIndex = 0; frequencyIndex < frequencies.length; frequencyIndex++) {
-            double frequency = frequencies[frequencyIndex];
+        for (int frequencyIndex = 0; frequencyIndex < requestFrequencies.length; frequencyIndex++) {
+            double frequency = requestFrequencies[frequencyIndex];
             // look for frequency index
             Integer idFreq = frequencyMapping.get(Double.doubleToLongBits(frequency));
             if (idFreq == null) {
                 // get closest index
-                idFreq = Arrays.binarySearch(frequencies, frequency);
+                idFreq = Arrays.binarySearch(this.frequencies, frequency);
                 if (idFreq < 0) {
-                    int last = Math.min(-idFreq - 1, frequencies.length - 1);
+                    int last = Math.min(-idFreq - 1, this.frequencies.length - 1);
                     int first = Math.max(last - 1, 0);
-                    idFreq = Math.abs(frequencies[first] - frequency) < Math.abs(frequencies[last] - frequency) ? first : last;
+                    idFreq = Math.abs(this.frequencies[first] - frequency) <
+                            Math.abs(this.frequencies[last] - frequency) ? first : last;
                 }
             }
             returnAttenuation[frequencyIndex] = record.attenuation[idFreq];
@@ -283,84 +271,15 @@ public class DiscreteDirectivitySphere implements DirectivitySphere {
         recordsPhi.sort(phiComparator);
     }
 
-    public static class ThetaComparator implements Comparator<DirectivityRecord>, Serializable {
 
-        @Override
-        public int compare(DirectivityRecord o1, DirectivityRecord o2) {
-            final int thetaCompare = Double.compare(o1.theta, o2.theta);
-            if (thetaCompare != 0) {
-                return thetaCompare;
-            }
-            return Double.compare(o1.phi, o2.phi);
-        }
-
-    }
-
-    public static class PhiComparator implements Comparator<DirectivityRecord>, Serializable {
-
-        @Override
-        public int compare(DirectivityRecord o1, DirectivityRecord o2) {
-            final int phiCompare = Double.compare(o1.phi, o2.phi);
-            if (phiCompare != 0) {
-                return phiCompare;
-            }
-            return Double.compare(o1.theta, o2.theta);
-        }
-
-    }
 
     /**
-     * directivity record is the attenuation value for a specific angle (theta, phi) - a point of the directivity sphere
+     * Check if this sphere is capable of producing an attenuation for this frequency
+     * @param frequency Frequency in Hertz
+     * @return a boolean
      */
-    public static class DirectivityRecord {
-        private double theta;
-        private double phi;
-        private double[] attenuation;
-
-        /**
-         * directivity record is the attenuation value for a specific angle (theta, phi) - a point of the directivity sphere
-         *
-         * @param theta (-π/2 π/2) 0 is horizontal; π is top
-         * @param phi (0 2π) 0 is front
-         * @param attenuation in dB
-         */
-        public DirectivityRecord(double theta, double phi, double[] attenuation) {
-            this.theta = theta;
-            this.phi = phi;
-            this.attenuation = attenuation;
-        }
-
-        public double getTheta() {
-            return theta;
-        }
-
-        public double getPhi() {
-            return phi;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            DirectivityRecord record = (DirectivityRecord) o;
-            return Double.compare(record.theta, theta) == 0 &&
-                    Double.compare(record.phi, phi) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(theta, phi);
-        }
-
-        @Override
-        public String toString() {
-            return String.format(Locale.ROOT, "DirectivityRecord{theta=%.2f (%.2g°)" +
-                            ", phi=%.2f (%.2g°) , attenuation=%s}", theta, Math.toDegrees(theta), phi, Math.toDegrees(phi),
-                    Arrays.toString(attenuation));
-        }
-
-        public double[] getAttenuation() {
-            return attenuation;
-        }
+    @Override
+    public boolean coverFrequency(double frequency) {
+        return Arrays.stream(frequencies).anyMatch(x -> x == frequency);
     }
 }

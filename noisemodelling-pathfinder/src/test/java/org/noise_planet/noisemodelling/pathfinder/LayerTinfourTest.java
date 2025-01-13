@@ -1,18 +1,28 @@
+/**
+ * NoiseModelling is a library capable of producing noise maps. It can be freely used either for research and education, as well as by experts in a professional use.
+ * <p>
+ * NoiseModelling is distributed under GPL 3 license. You can read a copy of this License in the file LICENCE provided with this software.
+ * <p>
+ * Official webpage : http://noise-planet.org/noisemodelling.html
+ * Contact: contact@noise-planet.org
+ */
+
 package org.noise_planet.noisemodelling.pathfinder;
 
-import org.h2gis.functions.io.osm.OSMDriverFunction;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.noise_planet.noisemodelling.pathfinder.delaunay.LayerDelaunayError;
+import org.noise_planet.noisemodelling.pathfinder.delaunay.LayerTinfour;
+import org.noise_planet.noisemodelling.pathfinder.delaunay.Triangle;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class LayerTinfourTest {
 
@@ -33,8 +43,7 @@ public class LayerTinfourTest {
         layerTinfour.processDelaunay();
 
 
-        List<Triangle> triangleList = layerTinfour.getTriangles();
-        List<Triangle> neighbors = layerTinfour.getNeighbors();
+        List<org.noise_planet.noisemodelling.pathfinder.delaunay.Triangle> triangleList = layerTinfour.getTriangles();
         assertEquals(8, triangleList.size());
     }
 
@@ -62,16 +71,15 @@ public class LayerTinfourTest {
 
         layerTinfour.processDelaunay();
 
-        List<Triangle> triangleList = layerTinfour.getTriangles();
+        List<org.noise_planet.noisemodelling.pathfinder.delaunay.Triangle> triangleList = layerTinfour.getTriangles();
         int numbertri55 = 0;
-        for(Triangle tri : triangleList) {
+        for(org.noise_planet.noisemodelling.pathfinder.delaunay.Triangle tri : triangleList) {
             if(tri.getAttribute() == 55) {
                 numbertri55++;
             }
         }
         // 2 triangle inside a rectangular building
         assertEquals(2, numbertri55);
-        List<Triangle> neighbors = layerTinfour.getNeighbors();
         assertEquals(10, triangleList.size());
     }
 
@@ -90,7 +98,7 @@ public class LayerTinfourTest {
         layerTinfour.setRetrieveNeighbors(true);
         layerTinfour.addPolygon(merged, 55);
         layerTinfour.processDelaunay();
-        List<Triangle> triangleList = layerTinfour.getTriangles();
+        List<org.noise_planet.noisemodelling.pathfinder.delaunay.Triangle> triangleList = layerTinfour.getTriangles();
         List<Coordinate> vertices = layerTinfour.getVertices();
         // Test dump
         layerTinfour.dumpData();

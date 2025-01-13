@@ -33,4 +33,10 @@ public interface DirectivitySphere {
      * @return Attenuation in dB for each frequency
      */
     double[] getAttenuationArray(double[] frequencies, double phi, double theta);
+
+    /**
+     * @param frequency Frequency in Hertz
+     * @return True if this sphere is capable of producing an attenuation for this frequency
+     */
+    boolean coverFrequency(double frequency);
 }

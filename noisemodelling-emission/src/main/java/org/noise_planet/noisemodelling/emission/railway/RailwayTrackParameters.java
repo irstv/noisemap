@@ -6,7 +6,6 @@
  * Official webpage : http://noise-planet.org/noisemodelling.html
  * Contact: contact@noise-planet.org
  */
-
 package org.noise_planet.noisemodelling.emission.railway;
 /**
  * Railway noise evaluation from Cnossos reference : COMMISSION DIRECTIVE (EU) 2015/996

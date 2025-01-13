@@ -189,25 +189,5 @@ public class RailWayNMPBParameters {
         BRIDGE
     }
 
-    public static final class TrainAttenuation implements DirectivitySphere {
-        TrainNoiseSource noiseSource;
 
-        public TrainAttenuation(TrainNoiseSource noiseSource) {
-            this.noiseSource = noiseSource;
-        }
-
-        @Override
-        public double getAttenuation(double frequency, double phi, double theta) {
-            return RailWayNMPBParameters.getDirectionAttenuation(noiseSource, phi, theta, frequency);
-        }
-
-        @Override
-        public double[] getAttenuationArray(double[] frequencies, double phi, double theta) {
-            double[] ret = new double[frequencies.length];
-            for (int idFrequency = 0; idFrequency < frequencies.length; idFrequency++) {
-                ret[idFrequency] = getAttenuation(frequencies[idFrequency], phi, theta);
-            }
-            return ret;
-        }
-    }
 }

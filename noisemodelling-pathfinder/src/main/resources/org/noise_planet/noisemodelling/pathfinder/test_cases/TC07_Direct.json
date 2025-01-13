@@ -1,0 +1,72 @@
+{
+  "cutPoints" : [ {
+    "type" : "Source",
+    "coordinate" : {
+      "x" : 10.0,
+      "y" : 10.0,
+      "z" : 1.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.9,
+    "sourcePk" : -1,
+    "li" : 1.0,
+    "orientation" : {
+      "yaw" : 0.0,
+      "pitch" : 0.0,
+      "roll" : 0.0
+    }
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 50.0,
+      "y" : 18.42105263157895,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.5
+  }, {
+    "type" : "GroundEffect",
+    "coordinate" : {
+      "x" : 150.0,
+      "y" : 39.473684210526315,
+      "z" : 0.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.2
+  }, {
+    "type" : "Wall",
+    "coordinate" : {
+      "x" : 176.57986111111111,
+      "y" : 45.06944444444444,
+      "z" : 6.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.2,
+    "wall" : {
+      "p0" : {
+        "x" : 100.0,
+        "y" : 240.0,
+        "z" : 6.0
+      },
+      "p1" : {
+        "x" : 265.0,
+        "y" : -180.0,
+        "z" : 6.0
+      }
+    },
+    "wallAlpha" : [ ],
+    "intersectionType" : "THIN_WALL_ENTER_EXIT"
+  }, {
+    "type" : "Receiver",
+    "coordinate" : {
+      "x" : 200.0,
+      "y" : 50.0,
+      "z" : 4.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.2,
+    "receiverPk" : -1
+  } ],
+  "hasBuildingIntersection" : true,
+  "hasTopographyIntersection" : false
+}

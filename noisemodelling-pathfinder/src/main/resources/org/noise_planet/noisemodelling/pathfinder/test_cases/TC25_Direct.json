@@ -1,0 +1,100 @@
+{
+  "cutPoints" : [ {
+    "type" : "Source",
+    "coordinate" : {
+      "x" : 38.0,
+      "y" : 14.0,
+      "z" : 1.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.0,
+    "sourcePk" : -1,
+    "li" : 1.0,
+    "orientation" : {
+      "yaw" : 0.0,
+      "pitch" : 0.0,
+      "roll" : 0.0
+    }
+  }, {
+    "type" : "Wall",
+    "coordinate" : {
+      "x" : 61.719880372723004,
+      "y" : 15.569697965841964,
+      "z" : 5.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.0,
+    "wall" : {
+      "p0" : {
+        "x" : 59.19,
+        "y" : 24.47,
+        "z" : 5.0
+      },
+      "p1" : {
+        "x" : 64.17,
+        "y" : 6.95,
+        "z" : 5.0
+      }
+    },
+    "wallAlpha" : [ ],
+    "intersectionType" : "THIN_WALL_ENTER_EXIT"
+  }, {
+    "type" : "Wall",
+    "coordinate" : {
+      "x" : 83.0,
+      "y" : 16.977941176470587,
+      "z" : 6.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.0,
+    "wall" : {
+      "p0" : {
+        "x" : 83.0,
+        "y" : 10.0,
+        "z" : 6.0
+      },
+      "p1" : {
+        "x" : 83.0,
+        "y" : 18.0,
+        "z" : 6.0
+      }
+    },
+    "wallAlpha" : [ 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2 ],
+    "intersectionType" : "BUILDING_ENTER"
+  }, {
+    "type" : "Wall",
+    "coordinate" : {
+      "x" : 98.44444444444444,
+      "y" : 18.0,
+      "z" : 6.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.0,
+    "wall" : {
+      "p0" : {
+        "x" : 83.0,
+        "y" : 18.0,
+        "z" : 6.0
+      },
+      "p1" : {
+        "x" : 118.0,
+        "y" : 18.0,
+        "z" : 6.0
+      }
+    },
+    "wallAlpha" : [ 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2 ],
+    "intersectionType" : "BUILDING_EXIT"
+  }, {
+    "type" : "Receiver",
+    "coordinate" : {
+      "x" : 106.0,
+      "y" : 18.5,
+      "z" : 4.0
+    },
+    "zGround" : 0.0,
+    "groundCoefficient" : 0.0,
+    "receiverPk" : -1
+  } ],
+  "hasBuildingIntersection" : true,
+  "hasTopographyIntersection" : false
+}

@@ -52,8 +52,7 @@ public class RoadVehicleCnossosvar {
         double RoadLvl; // Lw/m (1 veh/h)
 
         // Noise level
-        // Noise level
-        RoadLvl = getNoiseLvl(getCoeff("ap", freqParam, veh_type, coeffVer), getCoeff("bp", freqParam, veh_type, coeffVer), speed, 70.);
+        RoadLvl = getNoiseLvl(getCoeff("ar", freqParam, veh_type, coeffVer), getCoeff("br", freqParam, veh_type, coeffVer), speed, 70.);
 
         // Correction by temperature p. 36
         switch (veh_type) {
@@ -61,6 +60,8 @@ public class RoadVehicleCnossosvar {
                 RoadLvl = RoadLvl + 0.08 * (20 - Temperature); // K = 0.08  p. 36
                 break;
             case "2":
+                RoadLvl = RoadLvl + 0.04 * (20 - Temperature); // K = 0.04 p. 36
+                break;
             case "3":
                 RoadLvl = RoadLvl + 0.04 * (20 - Temperature); // K = 0.04 p. 36
                 break;
@@ -102,7 +103,7 @@ public class RoadVehicleCnossosvar {
         switch (acc_type) {
             case 1:
                 if (veh_type.equals("1") || veh_type.equals("2") || veh_type.equals("3")) {
-                    MotorLvl = MotorLvl + getCp(veh_type, Junc_type, coeffVer) * coefficientJunctionDistance;
+                   MotorLvl = MotorLvl + getCp(veh_type, Junc_type, coeffVer) * coefficientJunctionDistance;
                 }
                 break;
             case 2:

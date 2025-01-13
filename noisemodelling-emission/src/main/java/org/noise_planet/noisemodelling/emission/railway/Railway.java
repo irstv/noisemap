@@ -23,13 +23,10 @@ import java.util.Map;
  * Railway noise evaluation from Cnossos reference : COMMISSION DIRECTIVE (EU) 2015/996
  * of 19 May 2015 establishing common noise assessment methods according to Directive 2002/49/EC
  * of the European Parliament and of the Council
- *
  * amending, for the purposes of adapting to scientific and technical progress, Annex II to
  * Directive 2002/49/EC of the European Parliament and of the Council as regards
  * common noise assessment methods
- *
  * part 2.3. Railway noise
- *
  * Return the dB value corresponding to the parameters
  * @author Adrien Le Bellec, Université Gustave Eiffel
  * @author Olivier Chiello, Université Gustave Eiffel
@@ -100,7 +97,7 @@ public class Railway {
     /**
      * Get vehicle from a trainset
      * @param trainName Name of a Trainset
-     * @return a map of < vehicles , number of vehicles >
+     * @return a map of  vehicles , number of vehicles
      */
     public Map<String, Integer> getVehicleFromTrainset(String trainName) {
         Map<String, Integer> vehicles = null;
@@ -120,7 +117,7 @@ public class Railway {
 
     /**
      * Find if a specific vehicle is in the Vehicle List
-     * @param vehicleName Name of a Vehicule
+     * @param vehicleName Name of a Vehicle
      * @return true if in list
      */
     public boolean isInVehicleList(String vehicleName) {

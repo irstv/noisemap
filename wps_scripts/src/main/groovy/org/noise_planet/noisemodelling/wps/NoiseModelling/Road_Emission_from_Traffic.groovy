@@ -26,10 +26,10 @@ import org.h2gis.utilities.SpatialResultSet
 import org.h2gis.utilities.TableLocation
 import org.h2gis.utilities.wrapper.ConnectionWrapper
 import org.locationtech.jts.geom.Geometry
-import org.noise_planet.noisemodelling.jdbc.LDENConfig
-import org.noise_planet.noisemodelling.jdbc.LDENPropagationProcessData
-import org.noise_planet.noisemodelling.pathfinder.utils.PowerUtils
-import org.noise_planet.noisemodelling.propagation.PropagationProcessPathData
+import org.noise_planet.noisemodelling.jdbc.NoiseEmissionMaker
+import org.noise_planet.noisemodelling.jdbc.NoiseMapParameters
+import org.noise_planet.noisemodelling.pathfinder.utils.AcousticIndicatorsFunctions
+import org.noise_planet.noisemodelling.propagation.cnossos.AttenuationCnossosParameters
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -175,13 +175,13 @@ def exec(Connection connection, input) {
     // --------------------------------------
 
     // Get Class to compute LW
-    LDENConfig ldenConfig = new LDENConfig(LDENConfig.INPUT_MODE.INPUT_MODE_TRAFFIC_FLOW)
-    ldenConfig.setCoefficientVersion(2)
-    ldenConfig.setPropagationProcessPathData(LDENConfig.TIME_PERIOD.DAY, new PropagationProcessPathData(false));
-    ldenConfig.setPropagationProcessPathData(LDENConfig.TIME_PERIOD.EVENING, new PropagationProcessPathData(false));
-    ldenConfig.setPropagationProcessPathData(LDENConfig.TIME_PERIOD.NIGHT, new PropagationProcessPathData(false));
+    NoiseMapParameters noiseMapParameters = new NoiseMapParameters(NoiseMapParameters.INPUT_MODE.INPUT_MODE_TRAFFIC_FLOW)
+    noiseMapParameters.setCoefficientVersion(2)
+    noiseMapParameters.setPropagationProcessPathData(NoiseMapParameters.TIME_PERIOD.DAY, new AttenuationCnossosParameters(false));
+    noiseMapParameters.setPropagationProcessPathData(NoiseMapParameters.TIME_PERIOD.EVENING, new AttenuationCnossosParameters(false));
+    noiseMapParameters.setPropagationProcessPathData(NoiseMapParameters.TIME_PERIOD.NIGHT, new AttenuationCnossosParameters(false));
 
-    LDENPropagationProcessData ldenData = new LDENPropagationProcessData(null, ldenConfig)
+    NoiseEmissionMaker noiseEmissionMaker = new NoiseEmissionMaker(null, noiseMapParameters)
 
 
     // Get size of the table (number of road segments
@@ -204,10 +204,10 @@ def exec(Connection connection, input) {
             Geometry geo = rs.getGeometry()
 
             // Compute emission sound level for each road segment
-            def results = ldenData.computeLw(rs)
-            def lday = PowerUtils.wToDba(results[0])
-            def levening = PowerUtils.wToDba(results[1])
-            def lnight = PowerUtils.wToDba(results[2])
+            def results = noiseEmissionMaker.computeLw(rs)
+            def lday = AcousticIndicatorsFunctions.wToDba(results[0])
+            def levening = AcousticIndicatorsFunctions.wToDba(results[1])
+            def lnight = AcousticIndicatorsFunctions.wToDba(results[2])
             // fill the LW_ROADS table
             ps.addBatch(rs.getLong(pkIndex) as Integer, geo as Geometry,
                     lday[0] as Double, lday[1] as Double, lday[2] as Double,

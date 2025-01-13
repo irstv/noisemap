@@ -23,6 +23,7 @@ import org.geotools.jdbc.JDBCDataStore
 import org.h2gis.api.EmptyProgressVisitor
 import org.h2gis.functions.io.csv.CSVDriverFunction
 import org.h2gis.functions.io.dbf.DBFDriverFunction
+import org.h2gis.functions.io.fgb.FGBDriverFunction
 import org.h2gis.functions.io.geojson.GeoJsonDriverFunction
 import org.h2gis.functions.io.json.JsonDriverFunction
 import org.h2gis.functions.io.kml.KMLDriverFunction
@@ -39,7 +40,7 @@ import java.sql.Connection
 title = 'Export table'
 description = '&#10145;&#65039; Export table from the database into a local file. </br> '+
               '<hr>' +
-              'Valid file extensions: csv, dbf, geojson, gpx, bz2, gz, osm, shp, tsv </br> </br>' +
+              'Valid file extensions: csv, dbf, geojson, gpx, bz2, gz, osm, shp, tsv, fgb </br> </br>' +
               '<img src="/wps_images/export_table.png" alt="Export table" width="95%" align="center">'
 
 inputs = [
@@ -105,7 +106,7 @@ def exec(Connection connection, input) {
 
 
     // run export
-    String ext = exportPath.substring(exportPath.lastIndexOf('.') + 1, exportPath.length())
+    String ext = exportPath.substring(exportPath.lastIndexOf('.') + 1, exportPath.length()).toLowerCase(Locale.ROOT)
     switch (ext) {
         case "csv":
             CSVDriverFunction csvDriver = new CSVDriverFunction()
@@ -134,6 +135,10 @@ def exec(Connection connection, input) {
         case "tsv":
             TSVDriverFunction tsvDriver = new TSVDriverFunction()
             tsvDriver.exportTable(connection, tableToExport, new File(exportPath), true, new EmptyProgressVisitor())
+            break
+        case "fgb":
+            FGBDriverFunction fgbDriver = new FGBDriverFunction()
+            fgbDriver.exportTable(connection, tableToExport, new File(exportPath), true, new EmptyProgressVisitor())
             break
         default:
             throw new Exception("The file extension is not valid. No table has been exported.")

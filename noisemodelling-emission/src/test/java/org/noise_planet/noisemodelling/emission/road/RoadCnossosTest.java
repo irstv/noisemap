@@ -8,16 +8,14 @@
  */
 package org.noise_planet.noisemodelling.emission.road;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import org.junit.Test;
 import org.noise_planet.noisemodelling.emission.road.cnossos.RoadCnossos;
 import org.noise_planet.noisemodelling.emission.road.cnossos.RoadCnossosParameters;
-
 import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 /**
  * Test the Road model CNOSSOS as implemented in RoadCnossos.java
@@ -192,7 +190,7 @@ public class RoadCnossosTest {
                     FREQUENCIES[idFreq], temperature, surfRef, tsStud, pmStud, juncDist, juncType);
             rsParameters.setSlopePercentage(slope);
             rsParameters.setFileVersion(1);
-            assertEquals(String.format("%d Hz", FREQUENCIES[idFreq]), expectedValues[idFreq], RoadCnossos.evaluate(rsParameters), EPSILON_TEST1);
+            assertEquals(expectedValues[idFreq], RoadCnossos.evaluate(rsParameters), EPSILON_TEST1, String.format("%d Hz", FREQUENCIES[idFreq]));
         }
     }
 
@@ -219,11 +217,11 @@ public class RoadCnossosTest {
             rsParameters.setWay(3);
             rsParameters.setFileVersion(1);
             double result = RoadCnossos.evaluate(rsParameters);
-            assertEquals(String.format("%d Hz", FREQUENCIES[idFreq]), expectedValues[idFreq], result, EPSILON_TEST1);
+            assertEquals(expectedValues[idFreq], result, EPSILON_TEST1, String.format("%d Hz", FREQUENCIES[idFreq]));
         }
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testWrongPavement() throws IOException {
         String vehCat="1";
         double vehiclePerHour = 1000;
@@ -245,8 +243,7 @@ public class RoadCnossosTest {
             rsParameters.setSlopePercentage(slope);
             rsParameters.setWay(3);
             rsParameters.setFileVersion(1);
-            RoadCnossos.evaluate(rsParameters);
-
+            assertThrows(IOException.class, () -> RoadCnossos.evaluate(rsParameters));
         }
     }
 }

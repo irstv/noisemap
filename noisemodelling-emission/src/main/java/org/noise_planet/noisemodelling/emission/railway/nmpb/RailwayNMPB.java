@@ -6,7 +6,6 @@
  * Official webpage : http://noise-planet.org/noisemodelling.html
  * Contact: contact@noise-planet.org
  */
-
 package org.noise_planet.noisemodelling.emission.railway.nmpb;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -46,6 +45,12 @@ public class RailwayNMPB {
     private JsonNode NMPBVehicleData;
     private JsonNode NMPBTrainData;
 
+
+    /**
+     *
+     * @param inputStream
+     * @return
+     */
     private static JsonNode parse(InputStream inputStream) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -59,6 +64,12 @@ public class RailwayNMPB {
         return () -> iterator;
     }
 
+
+    /**
+     *
+     * @param NMPBVehicleData
+     * @param NMPBTrainData
+     */
     public void setEvaluateRailwaySourceNMPB(InputStream NMPBVehicleData, InputStream NMPBTrainData) {
         this.NMPBVehicleData = parse(NMPBVehicleData);
         this.NMPBTrainData = parse(NMPBTrainData);
@@ -121,6 +132,11 @@ public class RailwayNMPB {
         return NMPBTrainData;
     }
 
+    /**
+     *
+     * @param trainName
+     * @return
+     */
     public Map<String, Integer> getVehicleFromTrain(String trainName) {
         Map<String, Integer> vehicles = null;
         for (Iterator<Map.Entry<String, JsonNode>> it = getNMPBTrainData().fields(); it.hasNext(); ) {
@@ -154,6 +170,14 @@ public class RailwayNMPB {
         return inlist;
     }
 
+    /**
+     *
+     * @param typeVehicle
+     * @param refType
+     * @param spectreVer
+     * @param lambdaId
+     * @return
+     */
     public Double getLambdaValue(String typeVehicle, String refType, int spectreVer, int lambdaId) { //
         int refId = getNMPBVehicleNode(typeVehicle).get(refType).intValue();
         String ref = "";
@@ -165,14 +189,31 @@ public class RailwayNMPB {
         return getNMPBRailWayData(spectreVer).get("Vehicle").get(ref).get(String.valueOf(refId)).get("Values").get(lambdaId).doubleValue();
     }
 
+    /**
+     *
+     * @param trackRoughnessId
+     * @param spectreVer
+     * @param lambdaId
+     * @return
+     */
     public Double getTrackRoughness(int trackRoughnessId, int spectreVer, int lambdaId) { //
         return getNMPBRailWayData(spectreVer).get("Track").get("RailRoughness").get(String.valueOf(trackRoughnessId)).get("Values").get(lambdaId).doubleValue();
     }
 
+    /**
+     *
+     * @param typeVehicle
+     * @return
+     */
     public double getAxlesPerVeh(String typeVehicle) { //
         return getNMPBVehicleNode(typeVehicle).get("NbAxlePerVeh").doubleValue();
     }
 
+    /**
+     *
+     * @param typeVehicle
+     * @return
+     */
     public int getNbCoach(String typeVehicle) { //
         int nbCoach;
         try {
@@ -184,6 +225,16 @@ public class RailwayNMPB {
         return nbCoach;
     }
 
+    /**
+     *
+     * @param typeVehicle
+     * @param ref
+     * @param runningCondition
+     * @param sourceHeight
+     * @param spectreVer
+     * @param freqId
+     * @return
+     */
     public double getSpectre(String typeVehicle, String ref, int runningCondition, String sourceHeight, int spectreVer, int freqId) { //
         int refId = getNMPBVehicleNode(typeVehicle).get(ref).intValue();
         if (ref.equals("RefTraction")) {
@@ -222,29 +273,73 @@ public class RailwayNMPB {
         }
     }
 
+    /**
+     *
+     * @param typeVehicle
+     * @param ref
+     * @param spectreVer
+     * @param aeroInf
+     * @return
+     */
     public double getAeroV0Alpha(String typeVehicle, String ref, int spectreVer, String aeroInf) {
         int refId = getNMPBVehicleNode(typeVehicle).get(ref).intValue();
         return Double.parseDouble(getNMPBRailWayData(spectreVer).get("Vehicle").get("AerodynamicNoise").get(String.valueOf(refId)).get(aeroInf).asText());
     }
 
+    /**
+     *
+     * @param bridgeId
+     * @param spectreVer
+     * @param freqId
+     * @return
+     */
     public Double getBridgeStructural(int bridgeId, int spectreVer, int freqId) {
         return getNMPBRailWayData(spectreVer).get("Track").get("BridgeConstant").get(String.valueOf(bridgeId)).get("Values").get(freqId).doubleValue();
     }
 
+    /**
+     *
+     * @param trackTransferId
+     * @param spectreVer
+     * @param freqId
+     * @return
+     */
     public Double getTrackTransfer(int trackTransferId, int spectreVer, int freqId) { //
         return getNMPBRailWayData(spectreVer).get("Track").get("TrackTransfer").get(String.valueOf(trackTransferId)).get("Spectre").get(freqId).doubleValue();
     }
 
+    /**
+     *
+     * @param impactNoiseId
+     * @param spectreVer
+     * @param freqId
+     * @return
+     */
     public Double getImpactNoise(int impactNoiseId, int spectreVer, int freqId) { //
         return getNMPBRailWayData(spectreVer).get("Track").get("ImpactNoise").get(String.valueOf(impactNoiseId)).get("Values").get(freqId).doubleValue();
     }
 
+    /**
+     *
+     * @param typeVehicle
+     * @param spectreVer
+     * @param freqId
+     * @return
+     */
     public Double getVehTransfer(String typeVehicle, int spectreVer, int freqId) {
         int RefTransfer = getNMPBVehicleNode(typeVehicle).get("RefTransfer").intValue();
         return getNMPBRailWayData(spectreVer).get("Vehicle").get("Transfer").get(String.valueOf(RefTransfer)).get("Spectre").get(freqId).doubleValue();
 
     }
 
+    /**
+     *
+     * @param typeVehicle
+     * @param trackRoughnessId
+     * @param spectreVer
+     * @param idLambda
+     * @return
+     */
     public Double getLRoughness(String typeVehicle, int trackRoughnessId, int spectreVer, int idLambda) { //
         double wheelRoughness = getLambdaValue(typeVehicle, "RefRoughness", spectreVer, idLambda);
         double trackRoughness = getTrackRoughness(trackRoughnessId, spectreVer, idLambda);

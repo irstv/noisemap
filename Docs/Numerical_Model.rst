@@ -23,7 +23,7 @@ User can also add directly its own emission sound power level (LW).
 
 Path finding algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The path finding algorithm is a rubber-band like algorithm as specified in `CNOSSOS-EU`_. 
+The path finding algorithm is a rubber-band like algorithm as specified in `CNOSSOS-EU`_.
 
 To optimize the processing time, this algorithm is taking benefit from a R-Tree spatial partioning algorithm.
 

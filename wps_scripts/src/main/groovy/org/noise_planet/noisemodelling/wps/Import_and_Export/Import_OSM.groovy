@@ -131,6 +131,36 @@ inputs = [
                 max        : 1,
                 type       : Boolean.class
         ],
+        eliminateNoTrafficRoads : [
+                name       : 'Eliminate no traffic roads',
+                title      : 'Eliminate no traffic roads',
+                description: '<b>If checked</b>, only roads with these "TYPE" values will remain:<br>' +
+                             '- bus_guideway: Dedicated lanes or tracks for buses<br>' +
+                             '- busway: Bus-only lanes<br>' +
+                             '- living_street: Residential streets with pedestrian priority<br>' +
+                             '- motorway: High-speed, restricted-access highways<br>' +
+                             '- motorway_link: Connector ramps for motorways<br>' +
+                             '- primary: Major roads linking large cities<br>' +
+                             '- primary_link: Connector ramps for primary roads<br>' +
+                             '- raceway: Racing tracks<br>' +
+                             '- residential: Roads in residential areas<br>' +
+                             '- road: Generic roads<br>' +
+                             '- secondary: Roads connecting smaller towns<br>' +
+                             '- secondary_link: Connector ramps for secondary roads<br>' +
+                             '- service: Service lanes (access to parking lots, etc.)<br>' +
+                             '- tertiary: Roads connecting villages and hamlets<br>' +
+                             '- tertiary_link: Connector ramps for tertiary roads<br>' +
+                             '- trunk: Important roads that are not motorways<br>' +
+                             '- trunk_link: Connector ramps for trunk roads<br>' +
+                             '- unclassified: Minor roads not fitting higher classifications<br>' +
+                             '- rest_area: Areas for rest along roads<br>' +
+                             '- traffic_calming: Traffic calming features (speed bumps, etc.)<br>' +
+                             '- traffic_island: Traffic islands<br><br>' +
+                             '<b>If not checked</b>, all roads are processed as before.',
+                min        : 0, 
+                max        : 1,
+                type       : Boolean.class
+        ]
 ]
 
 outputs = [
@@ -156,8 +186,6 @@ static Connection openGeoserverDataStoreConnection(String dbName) {
 def run(input) {
 
     // Get name of the database
-    // by default an embedded h2gis database is created
-    // Advanced user can replace this database for a postGis or h2Gis server database.
     String dbName = "h2gisdb"
 
     // Open connection
@@ -170,10 +198,7 @@ def run(input) {
 // main function of the script
 def exec(Connection connection, input) {
 
-
-    //Map buildingsParamsMap = buildingsParams.toMap();
     connection = new ConnectionWrapper(connection)
-
     Sql sql = new Sql(connection)
 
     String resultString
@@ -181,10 +206,6 @@ def exec(Connection connection, input) {
     Logger logger = LoggerFactory.getLogger("org.noise_planet.noisemodelling")
     logger.info('Start : Get Buildings from OSM')
     logger.info("inputs {}", input)
-
-    // -------------------
-    // Get every inputs
-    // -------------------
 
     String pathFile = input["pathFile"] as String
 
@@ -213,15 +234,21 @@ def exec(Connection connection, input) {
         removeTunnels = input['removeTunnels'] as Boolean
     }
 
-    // Read the OSM file, depending on its extension
+    Boolean eliminateNoTrafficRoads = false
+    if ('eliminateNoTrafficRoads' in input) {
+        eliminateNoTrafficRoads = input['eliminateNoTrafficRoads'] as Boolean
+    }
+
     def reader
-    if (pathFile.endsWith(".pbf")) {
+    if (pathFile.toLowerCase(Locale.getDefault()).endsWith(".pbf")) {
         InputStream inputStream = new FileInputStream(pathFile);
         reader = new OsmosisReader(inputStream);
-    } else if (pathFile.endsWith(".osm")) {
+    } else if (pathFile.toLowerCase(Locale.getDefault()).endsWith(".osm")) {
         reader = new XmlReader(new File(pathFile), true, CompressionMethod.None);
-    } else if (pathFile.endsWith(".osm.gz")) {
+    } else if (pathFile.toLowerCase(Locale.getDefault()).endsWith(".osm.gz")) {
         reader = new XmlReader(new File(pathFile), true, CompressionMethod.GZip);
+    } else {
+        throw new IllegalArgumentException("File extension not known.Should be pbf, osm or osm.gz but got " + pathFile)
     }
 
     OsmHandler handler = new OsmHandler(logger, ignoreBuilding, ignoreRoads, ignoreGround, removeTunnels)
@@ -229,6 +256,17 @@ def exec(Connection connection, input) {
     reader.run();
 
     logger.info('OSM Read done')
+
+    // If eliminateNoTrafficRoads is true, filter the roads by the allowed list.
+    if (eliminateNoTrafficRoads && !ignoreRoads) {
+        def validRoadTypes = [
+            "bus_guideway", "busway", "living_street", "motorway", "motorway_link", "primary", "primary_link",
+            "raceway", "residential", "road", "secondary", "secondary_link", "service", "tertiary", "tertiary_link",
+            "trunk", "trunk_link", "unclassified", "rest_area", "traffic_calming", "traffic_island"
+        ]
+        handler.roads = handler.roads.findAll { validRoadTypes.contains(it.type) }
+    }
+
 
     if (!ignoreBuilding) {
         String tableName = "MAP_BUILDINGS_GEOM";

@@ -16,7 +16,7 @@ import org.h2gis.utilities.wrapper.ConnectionWrapper
 import org.locationtech.jts.geom.Geometry
 import org.noise_planet.noisemodelling.emission.road.cnossos.RoadCnossos
 import org.noise_planet.noisemodelling.emission.road.cnossos.RoadCnossosParameters
-import org.noise_planet.noisemodelling.propagation.PropagationProcessPathData
+import org.noise_planet.noisemodelling.propagation.cnossos.AttenuationCnossosParameters
 
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -204,9 +204,9 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
      * @param Junc_type Type of junction ((k = 1 for a crossing with traffic lights ; k = 2 for a roundabout)
      */
     // Compute day average level
-    double[] ld = new double[PropagationProcessPathData.freq_lvl.size()];
-    double[] le = new double[PropagationProcessPathData.freq_lvl.size()];
-    double[] ln = new double[PropagationProcessPathData.freq_lvl.size()];
+    double[] ld = new double[AttenuationCnossosParameters.freq_lvl.size()];
+    double[] le = new double[AttenuationCnossosParameters.freq_lvl.size()];
+    double[] ln = new double[AttenuationCnossosParameters.freq_lvl.size()];
 
     double lvPerHour = 0
     double mvPerHour = 0
@@ -229,7 +229,7 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
 
     int idFreq = 0
 
-    for (int freq : PropagationProcessPathData.freq_lvl) {
+    for (int freq : AttenuationCnossosParameters.freq_lvl) {
         RoadCnossosParameters rsParametersCnossos = new RoadCnossosParameters(v_vl_d, speedMv, v_pl_d, speedWav,
                 speedWbv, q_vl_d, mvPerHour, q_pl_d, wavPerHour, wbvPerHour, freq, Temperature,
                 roadSurface, Ts_stud, Pm_stud, Junc_dist, Junc_type);
@@ -239,7 +239,7 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
     // Evening
     idFreq = 0
 
-    for (int freq : PropagationProcessPathData.freq_lvl) {
+    for (int freq : AttenuationCnossosParameters.freq_lvl) {
         RoadCnossosParameters rsParametersCnossos = new RoadCnossosParameters(v_vl_e, speedMv, v_pl_e, speedWav,
                 speedWbv, q_vl_e, mvPerHour, q_pl_e, wavPerHour, wbvPerHour, freq, Temperature,
                 roadSurface, Ts_stud, Pm_stud, Junc_dist, Junc_type);
@@ -249,7 +249,7 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
     // Night
     idFreq = 0
 
-    for (int freq : PropagationProcessPathData.freq_lvl) {
+    for (int freq : AttenuationCnossosParameters.freq_lvl) {
         RoadCnossosParameters rsParametersCnossos = new RoadCnossosParameters(v_vl_n, speedMv, v_pl_n, speedWav,
                 speedWbv, q_vl_n, mvPerHour, q_pl_n, wavPerHour, wbvPerHour, freq, Temperature,
                 roadSurface, Ts_stud, Pm_stud, Junc_dist, Junc_type);

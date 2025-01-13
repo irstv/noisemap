@@ -1,10 +1,21 @@
+/**
+ * NoiseModelling is a library capable of producing noise maps. It can be freely used either for research and education, as well as by experts in a professional use.
+ * <p>
+ * NoiseModelling is distributed under GPL 3 license. You can read a copy of this License in the file LICENCE provided with this software.
+ * <p>
+ * Official webpage : http://noise-planet.org/noisemodelling.html
+ * Contact: contact@noise-planet.org
+ */
+
 package org.noise_planet.noisemodelling.jdbc;
 
 import org.h2gis.functions.factory.H2GISDBFactory;
 import org.h2gis.utilities.JDBCUtilities;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.noise_planet.noisemodelling.emission.directivity.DiscreteDirectivitySphere;
+import org.noise_planet.noisemodelling.emission.directivity.PolarGraphDirectivity;
 import org.noise_planet.noisemodelling.emission.railway.nmpb.RailWayNMPBParameters;
+import org.noise_planet.noisemodelling.emission.railway.nmpb.TrainAttenuation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
 import java.util.Map;
@@ -44,7 +54,7 @@ public class DirectivityTest {
         // DEBUG st.execute("UPDATE DIRECTIVITY SET LW500=-10 WHERE THETA=45 AND PHI=270 ");
         // Data is inserted now fetch it from the database
         Map<Integer, DiscreteDirectivitySphere> directivities =
-                DirectivityTableLoader.loadTable(connection, "DIRECTIVITY", 1);
+                NoiseMapLoader.fetchDirectivity(connection, "DIRECTIVITY", 1);
 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter("target/cardioid_dir.html"))) {
             bw.write("<!DOCTYPE html>\n" +
@@ -105,7 +115,7 @@ public class DirectivityTest {
         DiscreteDirectivitySphere noiseSource = new DiscreteDirectivitySphere(1, freqTest);
         noiseSource.setInterpolationMethod(1);
 
-        RailWayNMPBParameters.TrainAttenuation att = new RailWayNMPBParameters.TrainAttenuation(RailWayNMPBParameters.TrainNoiseSource.ROLLING);
+        TrainAttenuation att = new TrainAttenuation(RailWayNMPBParameters.TrainNoiseSource.ROLLING);
 
         for(int yaw = 0; yaw < 360; yaw += 5) {
             double phi = Math.toRadians(yaw);

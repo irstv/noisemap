@@ -165,7 +165,7 @@ Use the ``NoiseModelling:Noise_level_from_source`` WPS script. Fill the three fo
 * ``Buildings table name`` : ``BUILDINGS``
 
 .. warning::
-   For this example, since we only added information for noise level during the day (field ``LWD500``), we have to skip the noise level calculation for LDEN, LNIGHT and LEVENING. To do so, check the boxes for ``Do not compute LDEN_GEOM``, ``Do not compute LEVENING_GEOM`` and ``Do not compute LNIGHT_GEOM`` options.
+   For this example, since we only added information for noise level during the day (field ``LWD500``), we have to skip the noise level calculation for AttenuatedPaths, LNIGHT and LEVENING. To do so, check the boxes for ``Do not compute LDEN_GEOM``, ``Do not compute LEVENING_GEOM`` and ``Do not compute LNIGHT_GEOM`` options.
 
 Once ready, click on ``Run Process`` button.
 

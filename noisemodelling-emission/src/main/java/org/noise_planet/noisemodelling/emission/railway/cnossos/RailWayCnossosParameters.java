@@ -6,7 +6,6 @@
  * Official webpage : http://noise-planet.org/noisemodelling.html
  * Contact: contact@noise-planet.org
  */
-
 package org.noise_planet.noisemodelling.emission.railway.cnossos;
 /**
  * Railway noise evaluation from Cnossos reference : COMMISSION DIRECTIVE (EU) 2015/996
@@ -67,15 +66,6 @@ public class RailWayCnossosParameters extends RailWayParameters {
 
 
 
-    public RailWayCnossosParameters(double[] lWRolling, double[] lWTractionA, double[] lWTractionB, double[] lWAerodynamicA, double[] lWAerodynamicB, double[] lWBridge) {
-        setLWRolling(lWRolling);
-        setLWTractionA(lWTractionA);
-        setLWTractionB(lWTractionB);
-        setLWAerodynamicA(lWAerodynamicA);
-        setLWAerodynamicB(lWAerodynamicB);
-        setLWBridge(lWBridge);
-    }
-
     /**
      * Sum two train emission instances
      * @param lineSource1 Emission 1
@@ -92,21 +82,6 @@ public class RailWayCnossosParameters extends RailWayParameters {
         }
         return lineSource1;
     }
-   /* public static RailWayCnossosParameters sumRailwaySource(RailWayCnossosParameters railWayLW1, RailWayCnossosParameters railWayLW2) {
-        RailWayCnossosParameters railWayLW = new RailWayCnossosParameters();
-
-        railWayLW.setLWRolling(sumDbArray(railWayLW1.getLWRolling(), railWayLW2.getLWRolling()));
-        railWayLW.setLWAerodynamicA(sumDbArray(railWayLW1.getLWAerodynamicA(), railWayLW2.getLWAerodynamicA()));
-        railWayLW.setLWAerodynamicB(sumDbArray(railWayLW1.getLWAerodynamicB(), railWayLW2.getLWAerodynamicB()));
-        railWayLW.setLWBridge(sumDbArray(railWayLW1.getLWBridge(), railWayLW2.getLWBridge()));
-        railWayLW.setLWTractionA(sumDbArray(railWayLW1.getLWTractionA(), railWayLW2.getLWTractionA()));
-        railWayLW.setLWTractionB(sumDbArray(railWayLW1.getLWTractionB(), railWayLW2.getLWTractionB()));
-
-
-        return railWayLW;
-    }*/
-
-
 
 
     public double[] getLWRolling() {
@@ -193,25 +168,4 @@ public class RailWayCnossosParameters extends RailWayParameters {
         return attHorizontal + attVertical;
     }
 
-    public static final class RailwayDirectivitySphere implements DirectivitySphere {
-        LineSource lineSource;
-
-        public RailwayDirectivitySphere(LineSource lineSource) {
-            this.lineSource = lineSource;
-        }
-
-        @Override
-        public double getAttenuation(double frequency, double phi, double theta) {
-            return RailWayCnossosParameters.getDirectionAttenuation(lineSource, phi, theta, frequency);
-        }
-
-        @Override
-        public double[] getAttenuationArray(double[] frequencies, double phi, double theta) {
-            double[] ret = new double[frequencies.length];
-            for (int idFrequency = 0; idFrequency < frequencies.length; idFrequency++) {
-                ret[idFrequency] = getAttenuation(frequencies[idFrequency], phi, theta);
-            }
-            return ret;
-        }
-    }
 }

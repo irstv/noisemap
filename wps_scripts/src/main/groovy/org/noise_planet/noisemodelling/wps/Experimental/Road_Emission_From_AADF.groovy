@@ -17,7 +17,7 @@ import org.h2gis.utilities.wrapper.ConnectionWrapper
 import org.locationtech.jts.geom.Geometry
 import org.noise_planet.noisemodelling.emission.road.cnossos.RoadCnossos
 import org.noise_planet.noisemodelling.emission.road.cnossos.RoadCnossosParameters
-import org.noise_planet.noisemodelling.pathfinder.CnossosPropagationData
+import org.noise_planet.noisemodelling.pathfinder.path.Scene
 
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -223,9 +223,9 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
      * @param Junc_type Type of junction ((k = 1 for a crossing with traffic lights ; k = 2 for a roundabout)
      */
     // Compute day average level
-    double[] ld = new double[CnossosPropagationData.freq_lvl.size()];
-    double[] le = new double[CnossosPropagationData.freq_lvl.size()];
-    double[] ln = new double[CnossosPropagationData.freq_lvl.size()];
+    double[] ld = new double[Scene.freq_lvl.size()];
+    double[] le = new double[Scene.freq_lvl.size()];
+    double[] ln = new double[Scene.freq_lvl.size()];
 
     double lvPerHour = 0;
     double mvPerHour = 0;
@@ -249,7 +249,7 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
         lvPerHour = tmja * (1 - HV_PERCENTAGE) * (lv_hourly_distribution[h] / 100.0);
         hgvPerHour = tmja * HV_PERCENTAGE * (hv_hourly_distribution[h] / 100.0);
         int idFreq = 0;
-        for (int freq : CnossosPropagationData.freq_lvl) {
+        for (int freq : Scene.freq_lvl) {
             RoadCnossosParameters rsParametersCnossos = new RoadCnossosParameters(speedLv, speedMv, speedHgv, speedWav,
                     speedWbv, lvPerHour, mvPerHour, hgvPerHour, wavPerHour, wbvPerHour, freq, Temperature,
                     roadSurface, Ts_stud, Pm_stud, Junc_dist, Junc_type);
@@ -267,7 +267,7 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
         lvPerHour = tmja * (1- HV_PERCENTAGE) * (lv_hourly_distribution[h] / 100.0)
         mvPerHour = tmja * HV_PERCENTAGE * (hv_hourly_distribution[h] / 100.0)
         int idFreq = 0
-        for(int freq : CnossosPropagationData.freq_lvl) {
+        for(int freq : Scene.freq_lvl) {
             RoadCnossosParameters rsParametersCnossos = new RoadCnossosParameters(speedLv, speedMv, speedHgv, speedWav,
                     speedWbv, lvPerHour, mvPerHour, hgvPerHour, wavPerHour, wbvPerHour, freq, Temperature,
                     roadSurface, Ts_stud, Pm_stud, Junc_dist, Junc_type);
@@ -285,7 +285,7 @@ static double[][] computeLw(Long pk, Geometry geom, SpatialResultSet rs) throws 
         lvPerHour = tmja * (1- HV_PERCENTAGE) * (lv_hourly_distribution[h] / 100.0)
         mvPerHour = tmja * HV_PERCENTAGE * (hv_hourly_distribution[h] / 100.0)
         int idFreq = 0
-        for(int freq : CnossosPropagationData.freq_lvl) {
+        for(int freq : Scene.freq_lvl) {
             RoadCnossosParameters rsParametersCnossos = new RoadCnossosParameters(speedLv, speedMv, speedHgv, speedWav,
                     speedWbv, lvPerHour, mvPerHour, hgvPerHour, wavPerHour, wbvPerHour, freq, Temperature,
                     roadSurface, Ts_stud, Pm_stud, Junc_dist, Junc_type);

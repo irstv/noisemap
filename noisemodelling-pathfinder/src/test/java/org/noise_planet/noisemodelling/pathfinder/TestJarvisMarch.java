@@ -1,13 +1,23 @@
+/**
+ * NoiseModelling is a library capable of producing noise maps. It can be freely used either for research and education, as well as by experts in a professional use.
+ * <p>
+ * NoiseModelling is distributed under GPL 3 license. You can read a copy of this License in the file LICENCE provided with this software.
+ * <p>
+ * Official webpage : http://noise-planet.org/noisemodelling.html
+ * Contact: contact@noise-planet.org
+ */
+
 package org.noise_planet.noisemodelling.pathfinder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineSegment;
+import org.noise_planet.noisemodelling.pathfinder.utils.geometry.JTSUtility;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestJarvisMarch {
 
@@ -42,7 +52,7 @@ public class TestJarvisMarch {
             newPoints.get(i).setCoordinate(new Coordinate(pointsX[i], pointsY[i]));
         }
         //algorithm JarvisMarch to get the convex hull
-        JarvisMarch jm = new JarvisMarch(new JarvisMarch.Points(pointsX, pointsY));
+        //JarvisMarch jm = new JarvisMarch(new JarvisMarch.Points(pointsX, pointsY));
         double angle = new LineSegment(coordinateList.get(coordinateList.size() - 1), coordinateList.get(0)).angle();
         List<Coordinate> pts = JTSUtility.getXAscendingHullPoints(newPoints.toArray(new Coordinate[newPoints.size()]));
         JTSUtility.getOldCoordinateSystem(pts.get(0), angle);

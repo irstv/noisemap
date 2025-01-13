@@ -13,16 +13,16 @@ from jnius import autoclass
 # Imports
 RoadSourceParametersCnossos = autoclass('org.noise_planet.noisemodelling.emission.RoadSourceParametersCnossos')
 EvaluateRoadSourceCnossos = autoclass('org.noise_planet.noisemodelling.emission.EvaluateRoadSourceCnossos')
-CnossosPropagationData = autoclass('org.noise_planet.noisemodelling.pathfinder.CnossosPropagationData')
+PathParameters = autoclass('org.noise_planet.noisemodelling.pathfinder.path.PathParameters')
 RunnerMain = autoclass('org.noisemodelling.runner.Main')
 LoggerFactory = autoclass('org.slf4j.LoggerFactory')
 PropagationDataBuilder = autoclass('org.noise_planet.noisemodelling.pathfinder.PropagationDataBuilder')
-ComputeCnossosRays = autoclass('org.noise_planet.noisemodelling.pathfinder.ComputeCnossosRays')
-IComputeRaysOut = autoclass('org.noise_planet.noisemodelling.pathfinder.IComputeRaysOut')
+CnossosPaths = autoclass('org.noise_planet.noisemodelling.pathfinder.cnossos.CnossosPaths')
+IComputePathsOut = autoclass('org.noise_planet.noisemodelling.pathfinder.IComputePathsOut')
 ProfileBuilder = autoclass('org.noise_planet.noisemodelling.pathfinder.ProfileBuilder')
 ProfilerThread = autoclass('org.noise_planet.noisemodelling.pathfinder.utils.ProfilerThread')
 ComputeRaysOutAttenuation = autoclass('org.noise_planet.noisemodelling.propagation.ComputeRaysOutAttenuation')
-PropagationProcessPathData = autoclass('org.noise_planet.noisemodelling.propagation.PropagationProcessPathData')
+PropagationProcessPathData = autoclass('org.noise_planet.noisemodelling.propagation.cnossos.AttenuationCnossosParameters')
 Coordinate = autoclass('org.locationtech.jts.geom.Coordinate')
 Array = autoclass('java.lang.reflect.Array')
 
@@ -107,7 +107,7 @@ def propagation_demo():
     keep_rays = True
     keep_absorption = True
     prop_data_out = ComputeRaysOutAttenuation(keep_rays, keep_absorption, default_environmental_data)
-    compute_rays = ComputeCnossosRays(ray_data)
+    compute_rays = CnossosPaths(ray_data)
     compute_rays.setThreadCount(1)
 
     # Run computation
@@ -117,19 +117,19 @@ def propagation_demo():
     receiver = prop_data_out.getVerticesSoundLevel().get(0)
     source_lvl = 93  # 93 dB source level (not A weighted)
     formatting = "{0:<20} " + " ".join(["{%d:>8}" % (i + 1) for i in range(len(default_environmental_data.freq_lvl))])
-    l_a_top = [prop_data_out.getPropagationPaths()[0].absorptionData.aGlobal[i] + source_lvl +
+    l_a_top = [prop_data_out.getPropagationPaths()[0].cnossosPathsParameters.aGlobal[i] + source_lvl +
                default_environmental_data.freq_lvl_a_weighting[i]
                for i in range(len(default_environmental_data.freq_lvl))]
-    l_a_right = [prop_data_out.getPropagationPaths()[1].absorptionData.aGlobal[i] + source_lvl +
+    l_a_right = [prop_data_out.getPropagationPaths()[1].cnossosPathsParameters.aGlobal[i] + source_lvl +
                default_environmental_data.freq_lvl_a_weighting[i]
                for i in range(len(default_environmental_data.freq_lvl))]
-    l_a_left = [prop_data_out.getPropagationPaths()[2].absorptionData.aGlobal[i] + source_lvl +
+    l_a_left = [prop_data_out.getPropagationPaths()[2].cnossosPathsParameters.aGlobal[i] + source_lvl +
                default_environmental_data.freq_lvl_a_weighting[i]
                for i in range(len(default_environmental_data.freq_lvl))]
     print(formatting.format(*(["f in Hz"] + list(map(str, default_environmental_data.freq_lvl)))))
     print(formatting.format(*(["A atmospheric/km"] + format_db_list(prop_data_out.genericMeteoData.getAlpha_atmo()))))
     print(formatting.format(*(["A atmospheric dB"] + format_db_list(prop_data_out.getPropagationPaths()[0]
-                                                                    .absorptionData.aAtm))))
+                                                                    .cnossosPathsParameters.aAtm))))
     print(formatting.format(*(["A-weighting"] + format_db_list(default_environmental_data.freq_lvl_a_weighting))))
     print(formatting.format(*(["LA in dB over top"] + format_db_list(l_a_top))))
     print(formatting.format(*(["LA in dB right"] + format_db_list(l_a_right))))
